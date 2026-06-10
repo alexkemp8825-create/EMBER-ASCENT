@@ -1,4 +1,6 @@
-[gd_scene format=3]
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/combat/CombatManager.gd" id="1_combat_manager"]
 
 [node name="Combat" type="PanelContainer"]
 layout_mode = 3
@@ -7,24 +9,151 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_combat_manager")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 48
-theme_override_constants/margin_top = 48
-theme_override_constants/margin_right = 48
-theme_override_constants/margin_bottom = 48
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
 
 [node name="Content" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-alignment = 1
+theme_override_constants/separation = 16
 
-[node name="Title" type="Label" parent="MarginContainer/Content"]
+[node name="EncounterTitle" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Combat"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="MarginContainer/Content"]
+[node name="Battlefield" type="HBoxContainer" parent="MarginContainer/Content"]
 layout_mode = 2
-text = "Combat placeholder"
+size_flags_vertical = 3
+theme_override_constants/separation = 16
+
+[node name="EnemiesPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EnemiesMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="EnemiesContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EnemiesTitle" type="Label" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent"]
+layout_mode = 2
+text = "Enemies"
 horizontal_alignment = 1
+
+[node name="EnemiesContainer" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PlayerMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/PlayerPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="PlayerContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="PlayerTitle" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
+layout_mode = 2
+text = "Ash Knight"
+horizontal_alignment = 1
+
+[node name="PlayerStatsLabel" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HP: -\nBlock: -\nEnergy: -\nStrength: -"
+horizontal_alignment = 1
+
+[node name="PileStatsLabel" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Draw: 0  Hand: 0  Discard: 0  Exhaust: 0"
+horizontal_alignment = 1
+
+[node name="LogPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LogMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/LogPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="LogContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LogTitle" type="Label" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent"]
+layout_mode = 2
+text = "Combat Log"
+horizontal_alignment = 1
+
+[node name="CombatLogLabel" type="Label" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = ""
+autowrap_mode = 3
+
+[node name="BottomArea" type="HBoxContainer" parent="MarginContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HandPanel" type="PanelContainer" parent="MarginContainer/Content/BottomArea"]
+custom_minimum_size = Vector2(0, 360)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HandMargin" type="MarginContainer" parent="MarginContainer/Content/BottomArea/HandPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="HandScroll" type="ScrollContainer" parent="MarginContainer/Content/BottomArea/HandPanel/HandMargin"]
+layout_mode = 2
+horizontal_scroll_mode = 2
+vertical_scroll_mode = 0
+
+[node name="HandContainer" type="HBoxContainer" parent="MarginContainer/Content/BottomArea/HandPanel/HandMargin/HandScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TurnControls" type="VBoxContainer" parent="MarginContainer/Content/BottomArea"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+alignment = 2
+
+[node name="EndTurnButton" type="Button" parent="MarginContainer/Content/BottomArea/TurnControls"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
+text = "End Turn"
