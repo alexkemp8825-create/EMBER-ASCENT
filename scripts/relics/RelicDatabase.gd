@@ -26,6 +26,12 @@ const RELIC_DEFINITIONS := {
 		"description": "At the start of combat, gain 1 Strength.",
 		"rarity": "Rare",
 	},
+	"smoldering_tinder": {
+		"id": "smoldering_tinder",
+		"display_name": "Smoldering Tinder",
+		"description": "At the start of combat, apply 2 Burn to a random enemy.",
+		"rarity": "Starter",
+	},
 }
 
 const BOSS_REWARD_POOL: Array[String] = [

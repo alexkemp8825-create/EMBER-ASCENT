@@ -30,7 +30,7 @@ horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="MarginContainer/Content"]
 layout_mode = 2
-text = "Choose who will climb The Ember Spire."
+text = "Choose who will climb The Living Tower."
 horizontal_alignment = 1
 
 [node name="ClassGrid" type="GridContainer" parent="MarginContainer/Content"]
@@ -50,8 +50,7 @@ text = "Ash Knight\nPlayable\nDefence, retaliation, armour, heavy attacks"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(360, 104)
 layout_mode = 2
-disabled = true
-text = "Cinder Witch\nComing Soon\nBurn, curses, sacrifice, spell chaining"
+text = "Cinder Witch\nPlayable\nBurn, curses, sacrifice, spell chaining"
 
 [node name="GlassMonkButton" type="Button" parent="MarginContainer/Content/ClassGrid"]
 unique_name_in_owner = true
@@ -84,5 +83,5 @@ text = "Hollow Thief\nComing Soon\nPoison, stealth, discard, critical strikes"
 [node name="StatusLabel" type="Label" parent="MarginContainer/Content"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Only Ash Knight is playable in this phase."
+text = "Ash Knight and Cinder Witch are playable."
 horizontal_alignment = 1

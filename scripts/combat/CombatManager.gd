@@ -154,6 +154,12 @@ func _refill_draw_pile_from_discard() -> void:
 func _on_end_turn_pressed() -> void:
 	_log("Player ends the turn.")
 	_resolve_burn_cards_at_end_of_turn()
+	_resolve_enemy_burn_ticks()
+
+	if _are_all_enemies_defeated():
+		_handle_victory()
+		return
+
 	_discard_hand()
 	_clear_temporary_strength()
 
@@ -298,6 +304,10 @@ func _resolve_card_effects(card_data: CardData, target_index: int) -> void:
 				_add_status_to_discard(str(effect.get("card_id", "burn")), int(effect.get("amount", 1)))
 			"heal":
 				_heal(int(effect.get("amount", 0)))
+			"enemy_burn":
+				_apply_enemy_burn(target_index, int(effect.get("amount", 0)))
+			"enemy_burn_all":
+				_apply_enemy_burn_all(int(effect.get("amount", 0)))
 			_:
 				_log("Unhandled effect: %s." % effect.get("type", "unknown"))
 
@@ -352,6 +362,52 @@ func _clear_temporary_strength() -> void:
 	strength -= _temporary_strength
 	_log("Temporary Strength fades.")
 	_temporary_strength = 0
+
+
+func _apply_enemy_burn(target_index: int, amount: int) -> void:
+	if not _is_living_enemy_index(target_index):
+		_log("No enemy target for Burn.")
+		return
+
+	var enemy := _enemies[target_index]
+	enemy.apply_burn(amount)
+	_log("Applied %d Burn to %s." % [amount, enemy.display_name])
+
+
+func _apply_enemy_burn_all(amount: int) -> void:
+	for enemy_index in range(_enemies.size()):
+		if _is_living_enemy_index(enemy_index):
+			_apply_enemy_burn(enemy_index, amount)
+
+
+func _apply_burn_to_random_enemy(amount: int) -> void:
+	var living_indices: Array[int] = []
+
+	for enemy_index in range(_enemies.size()):
+		if _is_living_enemy_index(enemy_index):
+			living_indices.append(enemy_index)
+
+	if living_indices.is_empty():
+		return
+
+	var chosen_index: int = living_indices[RNG.rand_int(0, living_indices.size() - 1)]
+	_apply_enemy_burn(chosen_index, amount)
+
+
+func _resolve_enemy_burn_ticks() -> void:
+	for enemy in _enemies:
+		if not enemy.is_alive() or enemy.burn_stacks <= 0:
+			continue
+
+		var burn_damage := enemy.burn_stacks
+		var damage_dealt := enemy.take_damage(burn_damage)
+		enemy.burn_stacks = max(0, enemy.burn_stacks - 1)
+		_log("%s suffers %d Burn damage." % [enemy.display_name, damage_dealt])
+
+		if not enemy.is_alive():
+			_log("%s is defeated." % enemy.display_name)
+
+	_selected_enemy_index = _get_first_living_enemy_index()
 
 
 func _add_status_to_discard(card_id: String, amount: int) -> void:
@@ -455,6 +511,9 @@ func _apply_combat_start_relics() -> void:
 			"smoldering_brand":
 				strength += 1
 				_log("Smoldering Brand grants 1 Strength.")
+			"smoldering_tinder":
+				_apply_burn_to_random_enemy(2)
+				_log("Smoldering Tinder ignites a foe.")
 			_:
 				pass
 

@@ -42,7 +42,10 @@ func _refresh() -> void:
 
 	name_label.text = "%s%s" % ["> " if selected else "", enemy.display_name]
 	hp_label.text = "HP: %d/%d" % [enemy.hp, enemy.max_hp]
-	block_label.text = "Block: %d" % enemy.block
+	if enemy.burn_stacks > 0:
+		block_label.text = "Block: %d  |  Burn: %d" % [enemy.block, enemy.burn_stacks]
+	else:
+		block_label.text = "Block: %d" % enemy.block
 	intent_label.text = "Intent: %s" % _format_intent(enemy.get_current_action())
 	target_button.disabled = not enemy.is_alive()
 

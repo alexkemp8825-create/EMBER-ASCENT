@@ -1,22 +1,5 @@
 extends PanelContainer
 
-const ASH_KNIGHT_ID := "ash_knight"
-const ASH_KNIGHT_MAX_HP := 75
-const ASH_KNIGHT_STARTING_GOLD := 99
-const ASH_KNIGHT_STARTER_RELIC := "cracked_helm"
-const ASH_KNIGHT_STARTER_DECK := [
-	"ember_strike",
-	"ember_strike",
-	"ember_strike",
-	"ember_strike",
-	"ember_strike",
-	"guard_up",
-	"guard_up",
-	"guard_up",
-	"guard_up",
-	"burning_oath",
-]
-
 @onready var ash_knight_button: Button = %AshKnightButton
 @onready var cinder_witch_button: Button = %CinderWitchButton
 @onready var glass_monk_button: Button = %GlassMonkButton
@@ -25,15 +8,17 @@ const ASH_KNIGHT_STARTER_DECK := [
 @onready var hollow_thief_button: Button = %HollowThiefButton
 @onready var status_label: Label = %StatusLabel
 
+var _class_database := ClassDatabase.new()
+
 
 func _ready() -> void:
-	ash_knight_button.pressed.connect(_on_ash_knight_pressed)
+	ash_knight_button.pressed.connect(_on_class_selected.bind(ClassDatabase.ASH_KNIGHT))
+	cinder_witch_button.pressed.connect(_on_class_selected.bind(ClassDatabase.CINDER_WITCH))
 	_disable_coming_soon_buttons()
 
 
 func _disable_coming_soon_buttons() -> void:
 	var coming_soon_buttons: Array[Button] = [
-		cinder_witch_button,
 		glass_monk_button,
 		root_warden_button,
 		chain_prophet_button,
@@ -45,28 +30,39 @@ func _disable_coming_soon_buttons() -> void:
 		button.tooltip_text = "Coming Soon"
 
 
-func _on_ash_knight_pressed() -> void:
-	_start_ash_knight_run()
+func _on_class_selected(class_id: String) -> void:
+	if not _class_database.is_playable(class_id):
+		status_label.text = "That class is not playable yet."
+		return
+
+	_start_run(class_id)
 	SaveManager.save_run()
-	status_label.text = "Ash Knight selected. Entering The Living Tower..."
+
+	var class_definition := _class_database.get_class_definition(class_id)
+	status_label.text = "%s selected. Entering The Living Tower..." % class_definition.get("display_name", class_id)
 	SceneLoader.change_to_map()
 
 
-func _start_ash_knight_run() -> void:
+func _start_run(class_id: String) -> void:
+	var class_definition := _class_database.get_class_definition(class_id)
+	if class_definition.is_empty():
+		push_error("Unknown class requested: %s" % class_id)
+		return
+
 	RunState.reset_run()
-	RunState.selected_class = ASH_KNIGHT_ID
-	RunState.max_hp = ASH_KNIGHT_MAX_HP
-	RunState.current_hp = ASH_KNIGHT_MAX_HP
-	RunState.gold = ASH_KNIGHT_STARTING_GOLD
+	RunState.selected_class = class_id
+	RunState.max_hp = int(class_definition.get("max_hp", 0))
+	RunState.current_hp = RunState.max_hp
+	RunState.gold = int(class_definition.get("starting_gold", 0))
 	RunState.current_act = 1
 	RunState.run_seed = int(Time.get_unix_time_from_system())
 
 	RunState.deck.clear()
-	for card_id in ASH_KNIGHT_STARTER_DECK:
-		RunState.deck.append(card_id)
+	for card_id in class_definition.get("starter_deck", []):
+		RunState.deck.append(str(card_id))
 
 	RunState.relics.clear()
-	RunState.relics.append(ASH_KNIGHT_STARTER_RELIC)
+	RunState.relics.append(str(class_definition.get("starter_relic", "")))
 
 	RNG.set_seed(RunState.run_seed)
 	RunState.create_new_tower()

@@ -7,6 +7,7 @@ var max_hp: int = 0
 var hp: int = 0
 var block: int = 0
 var strength: int = 0
+var burn_stacks: int = 0
 var actions: Array[Dictionary] = []
 var action_index: int = 0
 
@@ -18,6 +19,7 @@ func setup(data: EnemyData) -> EnemyInstance:
 	hp = data.max_hp
 	block = 0
 	strength = 0
+	burn_stacks = 0
 	actions = data.actions.duplicate(true)
 	action_index = 0
 	return self
@@ -55,3 +57,10 @@ func gain_block(amount: int) -> void:
 
 func gain_strength(amount: int) -> void:
 	strength += amount
+
+
+func apply_burn(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	burn_stacks += amount
