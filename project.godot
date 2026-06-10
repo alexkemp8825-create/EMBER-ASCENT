@@ -9,6 +9,13 @@ config/name="EMBER ASCENT"
 run/main_scene="res://scenes/main/Main.tscn"
 config/features=PackedStringArray("4.0")
 
+[autoload]
+
+GameState="*res://scripts/core/GameState.gd"
+RunState="*res://scripts/core/RunState.gd"
+SceneLoader="*res://scripts/core/SceneLoader.gd"
+RNG="*res://scripts/core/RNG.gd"
+
 [display]
 
 window/size/viewport_width=1920

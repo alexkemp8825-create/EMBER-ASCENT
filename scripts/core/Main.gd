@@ -38,6 +38,10 @@ func change_screen(screen_name: String, payload: Variant = null) -> void:
 	current_screen = SCREEN_SCENES[screen_name].instantiate()
 	screen_root.add_child(current_screen)
 
+	var game_state := get_node_or_null("/root/GameState")
+	if game_state != null and game_state.has_method("set_current_screen"):
+		game_state.set_current_screen(screen_name)
+
 	if payload != null and current_screen.has_method("set_payload"):
 		current_screen.set_payload(payload)
 
