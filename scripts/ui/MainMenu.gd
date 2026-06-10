@@ -3,9 +3,11 @@ extends PanelContainer
 @onready var new_run_button: Button = %NewRunButton
 @onready var continue_button: Button = %ContinueRunButton
 @onready var quit_button: Button = %QuitButton
+@onready var version_label: Label = %VersionLabel
 
 
 func _ready() -> void:
+	version_label.text = "Build %s" % GameState.VERSION
 	new_run_button.pressed.connect(_on_new_run_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)

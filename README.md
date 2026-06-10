@@ -8,12 +8,14 @@ A roguelike deckbuilder built in Godot 4.x. Climb the Living Tower, fight enemie
 
 ## How to Run
 
-1. Clone this repository.
-2. Open Godot and click **Import**.
+1. Clone or pull the latest `main` branch.
+2. Open Godot 4.x and click **Import**.
 3. Select the `project.godot` file in the project root.
 4. Press **F5** (or click the Play button) to launch the game.
 
 The main scene is `scenes/main/Main.tscn`.
+
+**Verify you have the latest build:** the main menu should show `Build 0.1.1-map-fix` at the bottom. If you still see "Map placeholder", you are running an old copy — delete the `.godot` cache folder and re-import the project.
 
 ## How to Play (Test Build)
 

@@ -1,5 +1,7 @@
 extends PanelContainer
 
+const MapNavigatorScript := preload("res://scripts/map/MapNavigator.gd")
+
 @onready var ash_knight_button: Button = %AshKnightButton
 @onready var cinder_witch_button: Button = %CinderWitchButton
 @onready var glass_monk_button: Button = %GlassMonkButton
@@ -43,8 +45,12 @@ func _on_class_selected(class_id: String) -> void:
 		return
 
 	var class_definition := _class_database.get_class_definition(class_id)
-	status_label.text = "%s selected. Entering The Ember Spire..." % class_definition.get("display_name", class_id)
-	SceneLoader.change_to_map()
+	status_label.text = "%s selected. Starting first battle..." % class_definition.get("display_name", class_id)
+
+	if not MapNavigatorScript.begin_new_run():
+		status_label.text = "Failed to start the run. Please try again."
+		RunState.reset_run()
+		return
 
 
 func _start_run(class_id: String) -> void:

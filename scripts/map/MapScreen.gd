@@ -1,11 +1,11 @@
 extends PanelContainer
 
-const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
-const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
-const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
+const MapNavigatorScript := preload("res://scripts/map/MapNavigator.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
+@onready var version_label: Label = %VersionLabel
+@onready var primary_action_button: Button = %PrimaryActionButton
 @onready var tower_map_scroll: ScrollContainer = %TowerMapScroll
 @onready var tower_map_canvas: Control = %TowerMapCanvas
 @onready var available_rooms_container: VBoxContainer = %AvailableRoomsContainer
@@ -17,9 +17,12 @@ const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 
 
 func _ready() -> void:
+	version_label.text = "Build %s" % GameState.VERSION
+
 	if tower_map_canvas.has_signal("room_pressed"):
 		tower_map_canvas.room_pressed.connect(_on_room_pressed)
 
+	primary_action_button.pressed.connect(_on_primary_action_pressed)
 	new_run_button.pressed.connect(_on_new_run_pressed)
 	main_menu_button.pressed.connect(_on_main_menu_pressed)
 	abandon_run_button.pressed.connect(_on_abandon_run_pressed)
@@ -29,6 +32,8 @@ func _ready() -> void:
 
 func _refresh_map() -> void:
 	_clear_available_room_buttons()
+	MapNavigatorScript._ensure_tower_is_ready()
+
 	var tower_state := RunState.get_tower_state()
 	var current_room := tower_state.get_room(tower_state.current_room_id)
 	stats_label.text = "HP: %d/%d  |  Gold: %d  |  Act %d Floor %d" % [
@@ -50,82 +55,43 @@ func _refresh_map() -> void:
 		return
 
 	victory_panel.visible = false
+	primary_action_button.visible = true
 	abandon_run_button.visible = true
 	tower_map_canvas.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	var available_rooms := tower_state.get_available_rooms()
 	if available_rooms.is_empty():
+		primary_action_button.visible = false
 		status_label.text = "No paths remain from here."
-	else:
-		_populate_available_room_buttons(available_rooms)
-		if status_label.text == "" or not status_label.text.begins_with("Act "):
-			status_label.text = "Choose your next room using the buttons below or the map."
-		call_deferred("_scroll_to_room", available_rooms[0])
+		return
+
+	var next_room: TowerRoomData = available_rooms[0]
+	primary_action_button.text = "Continue: %s (Floor %d)" % [next_room.display_name, next_room.floor]
+	_populate_available_room_buttons(available_rooms)
+
+	if status_label.text == "" or not status_label.text.begins_with("Act "):
+		status_label.text = "Press Continue to enter the next room."
+
+	call_deferred("_scroll_to_room", next_room)
 
 
 func _on_room_pressed(room: TowerRoomData) -> void:
-	RunState.enter_room(room.room_id)
-
-	match room.room_type:
-		TowerRoomDatabaseScript.ROOM_BATTLE:
-			SceneLoader.change_to_combat(_get_battle_encounter_id(room.floor))
-		TowerRoomDatabaseScript.ROOM_ELITE:
-			SceneLoader.change_to_combat(_get_elite_encounter_id(room))
-		TowerRoomDatabaseScript.ROOM_BOSS:
-			SceneLoader.change_to_combat(
-				RewardManagerScript.get_boss_encounter_for_act(RunState.current_act)
-			)
-		TowerRoomDatabaseScript.ROOM_REST:
-			SceneLoader.change_to_rest()
-		TowerRoomDatabaseScript.ROOM_MARKET:
-			SceneLoader.change_to_shop()
-		TowerRoomDatabaseScript.ROOM_FORGE:
-			SceneLoader.change_to_forge()
-		TowerRoomDatabaseScript.ROOM_OBSERVATORY:
-			SceneLoader.change_to_observatory()
-		TowerRoomDatabaseScript.ROOM_SHRINE:
-			SceneLoader.change_to_shrine()
-		TowerRoomDatabaseScript.ROOM_EVENT:
-			SceneLoader.change_to_event(room.source_card_id)
-		_:
-			push_warning("Unhandled room type: %s" % room.room_type)
+	MapNavigatorScript.travel_to_room(room)
 
 
-func _get_elite_encounter_id(room: TowerRoomData) -> String:
-	if room.source_card_id != "":
-		return room.source_card_id
-
-	if RunState.current_act >= 2:
-		return "cinder_colossus"
-
-	return "ember_warden"
-
-
-func _get_battle_encounter_id(floor: int) -> String:
-	if RunState.current_act >= 2:
-		if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
-			return "ash_zealot"
-
-		if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
-			return "furnace_hound"
-
-		return "molten_guard"
-
-	if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
-		return "molten_guard"
-
-	if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
-		return "charred_rat"
-
-	return "furnace_cultist"
+func _on_primary_action_pressed() -> void:
+	var next_room := MapNavigatorScript.get_first_available_room()
+	if next_room != null:
+		MapNavigatorScript.travel_to_room(next_room)
 
 
 func _show_victory_panel() -> void:
 	victory_panel.visible = true
+	primary_action_button.visible = false
 	abandon_run_button.visible = false
 	tower_map_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	victory_message_label.text = (
-		"You have conquered the Living Tower.\n"
+		"You have conquered the Ember Spire.\n"
 		+ "Class: %s  |  Final HP: %d/%d  |  Gold: %d"
 	) % [
 		_get_class_display_name(),
