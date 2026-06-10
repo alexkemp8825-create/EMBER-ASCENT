@@ -23,11 +23,13 @@ const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 @onready var player_title: Label = %PlayerTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
 @onready var player_stats_label: Label = %PlayerStatsLabel
-@onready var defeat_panel: PanelContainer = %DefeatPanel
+@onready var defeat_panel: Control = %DefeatPanel
 @onready var defeat_message_label: Label = %DefeatMessageLabel
 @onready var defeat_continue_button: Button = %DefeatContinueButton
 @onready var pile_stats_label: Label = %PileStatsLabel
+@onready var hand_scroll: ScrollContainer = %HandScroll
 @onready var hand_container: HBoxContainer = %HandContainer
+@onready var log_scroll: ScrollContainer = %LogScroll
 @onready var combat_log_label: Label = %CombatLogLabel
 @onready var end_turn_button: Button = %EndTurnButton
 
@@ -594,9 +596,36 @@ func _refresh_hand() -> void:
 		card_view.set_card_instance(card_instance)
 		card_view.play_pressed.connect(_on_card_play_requested)
 
+	call_deferred("_sync_hand_scroll")
+
 
 func _refresh_log() -> void:
 	combat_log_label.text = _format_combat_log()
+	call_deferred("_sync_log_scroll")
+
+
+func _sync_hand_scroll() -> void:
+	if hand_scroll == null:
+		return
+
+	hand_scroll.scroll_horizontal = 0
+
+
+func _sync_log_scroll() -> void:
+	if log_scroll == null or combat_log_label == null:
+		return
+
+	combat_log_label.custom_minimum_size.x = maxf(0.0, log_scroll.size.x - 8.0)
+	call_deferred("_finish_log_scroll")
+
+
+func _finish_log_scroll() -> void:
+	if log_scroll == null:
+		return
+
+	var scroll_bar := log_scroll.get_v_scroll_bar()
+	if scroll_bar != null:
+		log_scroll.scroll_vertical = int(scroll_bar.max_value)
 
 
 func _format_combat_log() -> String:

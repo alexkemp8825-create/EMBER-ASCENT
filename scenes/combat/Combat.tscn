@@ -9,18 +9,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+clip_contents = true
 script = ExtResource("1_combat_manager")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
 
 [node name="Content" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 
 [node name="EncounterTitle" type="Label" parent="MarginContainer/Content"]
 unique_name_in_owner = true
@@ -31,49 +32,63 @@ horizontal_alignment = 1
 [node name="Battlefield" type="HBoxContainer" parent="MarginContainer/Content"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 16
+size_flags_stretch_ratio = 1.2
+theme_override_constants/separation = 12
 
 [node name="EnemiesPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(260, 140)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
 
 [node name="EnemiesMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="EnemiesContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_vertical = 3
+theme_override_constants/separation = 8
 
 [node name="EnemiesTitle" type="Label" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent"]
 layout_mode = 2
 text = "Enemies"
 horizontal_alignment = 1
 
-[node name="EnemiesContainer" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent"]
+[node name="EnemiesScroll" type="ScrollContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="EnemiesContainer" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/EnemiesPanel/EnemiesMargin/EnemiesContent/EnemiesScroll"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
 
 [node name="PlayerPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(220, 140)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
 
 [node name="PlayerMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/PlayerPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="PlayerContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_vertical = 3
+theme_override_constants/separation = 8
 alignment = 1
 
 [node name="PlayerTitle" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
@@ -93,76 +108,98 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Draw: 0  Hand: 0  Discard: 0  Exhaust: 0"
 horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="LogPanel" type="PanelContainer" parent="MarginContainer/Content/Battlefield"]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(280, 140)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.15
 
 [node name="LogMargin" type="MarginContainer" parent="MarginContainer/Content/Battlefield/LogPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="LogContent" type="VBoxContainer" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_vertical = 3
+theme_override_constants/separation = 8
 
 [node name="LogTitle" type="Label" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent"]
 layout_mode = 2
 text = "Combat Log"
 horizontal_alignment = 1
 
-[node name="CombatLogLabel" type="Label" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent"]
+[node name="LogScroll" type="ScrollContainer" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="CombatLogLabel" type="Label" parent="MarginContainer/Content/Battlefield/LogPanel/LogMargin/LogContent/LogScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = ""
 autowrap_mode = 3
 
 [node name="BottomArea" type="HBoxContainer" parent="MarginContainer/Content"]
+custom_minimum_size = Vector2(0, 292)
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 12
 
 [node name="HandPanel" type="PanelContainer" parent="MarginContainer/Content/BottomArea"]
-custom_minimum_size = Vector2(0, 360)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="HandMargin" type="MarginContainer" parent="MarginContainer/Content/BottomArea/HandPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
 
 [node name="HandScroll" type="ScrollContainer" parent="MarginContainer/Content/BottomArea/HandPanel/HandMargin"]
+unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 horizontal_scroll_mode = 2
 vertical_scroll_mode = 0
 
 [node name="HandContainer" type="HBoxContainer" parent="MarginContainer/Content/BottomArea/HandPanel/HandMargin/HandScroll"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/separation = 12
+size_flags_vertical = 4
+theme_override_constants/separation = 10
 
 [node name="TurnControls" type="VBoxContainer" parent="MarginContainer/Content/BottomArea"]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
+size_flags_vertical = 4
 alignment = 2
 
 [node name="EndTurnButton" type="Button" parent="MarginContainer/Content/BottomArea/TurnControls"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 56)
+custom_minimum_size = Vector2(168, 56)
 layout_mode = 2
+size_flags_horizontal = 4
 text = "End Turn"
 
-[node name="DefeatPanel" type="PanelContainer" parent="."]
+[node name="DefeatLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="DefeatPanel" type="Control" parent="DefeatLayer"]
 unique_name_in_owner = true
 visible = false
-layout_mode = 1
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -170,31 +207,54 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
 
-[node name="DefeatMargin" type="MarginContainer" parent="DefeatPanel"]
+[node name="Backdrop" type="ColorRect" parent="DefeatLayer/DefeatPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+color = Color(0.04, 0.035, 0.03, 0.82)
+
+[node name="DefeatCenter" type="CenterContainer" parent="DefeatLayer/DefeatPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DefeatCard" type="PanelContainer" parent="DefeatLayer/DefeatPanel/DefeatCenter"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+
+[node name="DefeatMargin" type="MarginContainer" parent="DefeatLayer/DefeatPanel/DefeatCenter/DefeatCard"]
 layout_mode = 2
 theme_override_constants/margin_left = 32
 theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 32
 theme_override_constants/margin_bottom = 32
 
-[node name="DefeatContent" type="VBoxContainer" parent="DefeatPanel/DefeatMargin"]
+[node name="DefeatContent" type="VBoxContainer" parent="DefeatLayer/DefeatPanel/DefeatCenter/DefeatCard/DefeatMargin"]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="DefeatTitle" type="Label" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+[node name="DefeatTitle" type="Label" parent="DefeatLayer/DefeatPanel/DefeatCenter/DefeatCard/DefeatMargin/DefeatContent"]
 layout_mode = 2
 text = "Defeated"
 horizontal_alignment = 1
 
-[node name="DefeatMessageLabel" type="Label" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+[node name="DefeatMessageLabel" type="Label" parent="DefeatLayer/DefeatPanel/DefeatCenter/DefeatCard/DefeatMargin/DefeatContent"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Your embers fade in the tower's silence."
 horizontal_alignment = 1
-autowrap_mode = 2
+autowrap_mode = 3
 
-[node name="DefeatContinueButton" type="Button" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+[node name="DefeatContinueButton" type="Button" parent="DefeatLayer/DefeatPanel/DefeatCenter/DefeatCard/DefeatMargin/DefeatContent"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
