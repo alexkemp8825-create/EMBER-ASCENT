@@ -11,7 +11,10 @@ func setup(data: Dictionary) -> EventData:
 	id = data.get("id", "")
 	title = data.get("title", "")
 	description = data.get("description", "")
-	choices = data.get("choices", []).duplicate(true)
+	choices.clear()
+	for choice in data.get("choices", []):
+		if choice is Dictionary:
+			choices.append(choice)
 	return self
 
 
