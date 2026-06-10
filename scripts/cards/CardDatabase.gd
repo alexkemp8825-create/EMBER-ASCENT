@@ -59,6 +59,125 @@ const CARD_DEFINITIONS := {
 		],
 		"upgraded_id": "",
 	},
+	"heavy_strike": {
+		"id": "heavy_strike",
+		"display_name": "Heavy Strike",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Common",
+		"description": "Deal 10 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 10},
+		],
+		"upgraded_id": "",
+	},
+	"iron_wall": {
+		"id": "iron_wall",
+		"display_name": "Iron Wall",
+		"card_type": "Skill",
+		"cost": 2,
+		"rarity": "Common",
+		"description": "Gain 8 block.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 8},
+		],
+		"upgraded_id": "",
+	},
+	"deflect": {
+		"id": "deflect",
+		"display_name": "Deflect",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Common",
+		"description": "Gain 4 block. Draw 1 card.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 4},
+			{"type": "draw", "amount": 1},
+		],
+		"upgraded_id": "",
+	},
+	"second_wind": {
+		"id": "second_wind",
+		"display_name": "Second Wind",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Common",
+		"description": "Heal 3 HP.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "heal", "amount": 3},
+		],
+		"upgraded_id": "",
+	},
+	"ember_wall": {
+		"id": "ember_wall",
+		"display_name": "Ember Wall",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Common",
+		"description": "Gain 6 block.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 6},
+		],
+		"upgraded_id": "",
+	},
+	"piercing_blow": {
+		"id": "piercing_blow",
+		"display_name": "Piercing Blow",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Uncommon",
+		"description": "Deal 7 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 7},
+		],
+		"upgraded_id": "",
+	},
+	"molten_slash": {
+		"id": "molten_slash",
+		"display_name": "Molten Slash",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Uncommon",
+		"description": "Deal 9 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 9},
+		],
+		"upgraded_id": "",
+	},
+	"rally": {
+		"id": "rally",
+		"display_name": "Rally",
+		"card_type": "Skill",
+		"cost": 0,
+		"rarity": "Uncommon",
+		"description": "Draw 2 cards.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "draw", "amount": 2},
+		],
+		"upgraded_id": "",
+	},
+	"intimidating_shout": {
+		"id": "intimidating_shout",
+		"display_name": "Intimidating Shout",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Uncommon",
+		"description": "Gain 4 block. Draw 1 card.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 4},
+			{"type": "draw", "amount": 1},
+		],
+		"upgraded_id": "",
+	},
 }
 
 const CARD_CLASSES := {
@@ -66,6 +185,15 @@ const CARD_CLASSES := {
 	"guard_up": [ASH_KNIGHT],
 	"burning_oath": [ASH_KNIGHT],
 	"burn": [ALL_CLASSES],
+	"heavy_strike": [ASH_KNIGHT],
+	"iron_wall": [ASH_KNIGHT],
+	"deflect": [ASH_KNIGHT],
+	"second_wind": [ASH_KNIGHT],
+	"ember_wall": [ASH_KNIGHT],
+	"piercing_blow": [ASH_KNIGHT],
+	"molten_slash": [ASH_KNIGHT],
+	"rally": [ASH_KNIGHT],
+	"intimidating_shout": [ASH_KNIGHT],
 }
 
 var _cards: Dictionary = {}
@@ -111,11 +239,7 @@ func get_reward_cards(class_id: String, count: int) -> Array[CardData]:
 			candidates.append(card_data)
 
 	var rewards: Array[CardData] = []
-	var shuffled := candidates.duplicate()
-	var rng_node := get_node_or_null("/root/RNG") if is_inside_tree() else null
-
-	if rng_node != null and rng_node.has_method("shuffle_array"):
-		shuffled = rng_node.shuffle_array(candidates)
+	var shuffled: Array = RNG.shuffle_array(candidates)
 
 	for card_data in shuffled:
 		if rewards.size() >= count:

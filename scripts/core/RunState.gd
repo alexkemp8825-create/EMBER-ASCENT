@@ -72,3 +72,28 @@ func complete_active_room() -> bool:
 
 	active_room_id = ""
 	return completed
+
+
+func add_card_to_deck(card_id: String) -> void:
+	if card_id == "":
+		return
+
+	deck.append(card_id)
+
+
+func add_gold(amount: int) -> void:
+	if amount <= 0:
+		return
+
+	gold += amount
+
+
+func add_relic(relic_id: String) -> void:
+	if relic_id == "" or relics.has(relic_id):
+		return
+
+	relics.append(relic_id)
+
+
+func has_relic(relic_id: String) -> bool:
+	return relics.has(relic_id)

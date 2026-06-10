@@ -17,6 +17,7 @@ const PLACEHOLDER_STARTER_DECK := [
 
 const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
 const ENEMY_VIEW_SCENE := preload("res://scenes/combat/EnemyView.tscn")
+const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 
 @onready var encounter_title: Label = %EncounterTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
@@ -120,6 +121,10 @@ func _start_player_turn() -> void:
 	_turn_number += 1
 	energy = STARTING_ENERGY
 	block = 0
+
+	if _turn_number == 1:
+		_apply_combat_start_relics()
+
 	_draw_cards(CARDS_DRAWN_PER_TURN)
 	_log("Turn %d begins. Drew up to %d cards." % [_turn_number, CARDS_DRAWN_PER_TURN])
 	_refresh_ui()
@@ -290,6 +295,8 @@ func _resolve_card_effects(card_data: CardData, target_index: int) -> void:
 				_gain_temporary_strength(int(effect.get("amount", 0)))
 			"add_status_to_discard":
 				_add_status_to_discard(str(effect.get("card_id", "burn")), int(effect.get("amount", 1)))
+			"heal":
+				_heal(int(effect.get("amount", 0)))
 			_:
 				_log("Unhandled effect: %s." % effect.get("type", "unknown"))
 
@@ -322,6 +329,13 @@ func _apply_damage_effect(target_index: int, amount: int) -> void:
 func _gain_block(amount: int) -> void:
 	block += amount
 	_log("Gained %d block." % amount)
+
+
+func _heal(amount: int) -> void:
+	var max_hp := RunState.max_hp if RunState.max_hp > 0 else 75
+	var healed := min(amount, max_hp - hp)
+	hp += healed
+	_log("Healed %d HP." % healed)
 
 
 func _gain_temporary_strength(amount: int) -> void:
@@ -414,12 +428,33 @@ func _are_all_enemies_defeated() -> bool:
 func _handle_victory() -> void:
 	RunState.current_hp = max(hp, 1)
 	_log("Victory.")
-	SceneLoader.change_to_rewards({})
+	var reward_payload := RewardManagerScript.build_combat_reward_payload(encounter_id, RunState.current_floor)
+	SceneLoader.change_to_rewards(reward_payload)
 
 
 func _handle_defeat() -> void:
 	_log("Defeat.")
+	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
+
+
+func _apply_combat_start_relics() -> void:
+	for relic_id in RunState.relics:
+		match relic_id:
+			"cracked_helm":
+				block += 2
+				_log("Cracked Helm grants 2 Block.")
+			"ember_heart":
+				_heal(2)
+				_log("Ember Heart restores 2 HP.")
+			"ash_shield":
+				block += 3
+				_log("Ash Shield grants 3 Block.")
+			"smoldering_brand":
+				strength += 1
+				_log("Smoldering Brand grants 1 Strength.")
+			_:
+				pass
 
 
 func _refresh_ui() -> void:

@@ -1,6 +1,7 @@
 extends PanelContainer
 
 signal play_pressed(card_instance)
+signal select_pressed(card_data)
 
 @onready var name_label: Label = %NameLabel
 @onready var cost_label: Label = %CostLabel
@@ -11,6 +12,8 @@ signal play_pressed(card_instance)
 var card_instance: CardInstance
 var card_data: CardData
 var _card_database := CardDatabase.new()
+var _selection_mode := false
+var _selection_button_text := "Select"
 
 
 func _ready() -> void:
@@ -39,6 +42,12 @@ func clear() -> void:
 	_refresh()
 
 
+func set_selection_mode(enabled: bool, button_text: String = "Select") -> void:
+	_selection_mode = enabled
+	_selection_button_text = button_text
+	_refresh()
+
+
 func _refresh() -> void:
 	if not is_node_ready():
 		return
@@ -53,9 +62,15 @@ func _refresh() -> void:
 
 	name_label.text = card_data.display_name
 	cost_label.text = _format_cost(card_data.cost)
-	type_label.text = card_data.card_type
+	type_label.text = "%s  |  %s" % [card_data.card_type, card_data.rarity]
 	description_label.text = card_data.description
-	play_button.disabled = not card_data.is_playable()
+
+	if _selection_mode:
+		play_button.text = _selection_button_text
+		play_button.disabled = false
+	else:
+		play_button.text = "Play"
+		play_button.disabled = not card_data.is_playable()
 
 
 func _format_cost(cost: int) -> String:
@@ -66,7 +81,14 @@ func _format_cost(cost: int) -> String:
 
 
 func _on_play_button_pressed() -> void:
-	if card_instance == null or card_data == null or not card_data.is_playable():
+	if card_data == null:
+		return
+
+	if _selection_mode:
+		select_pressed.emit(card_data)
+		return
+
+	if card_instance == null or not card_data.is_playable():
 		return
 
 	play_pressed.emit(card_instance)
