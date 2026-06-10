@@ -34,6 +34,7 @@ func change_screen(screen_name: String, payload: Variant = null) -> void:
 
 	if current_screen != null:
 		current_screen.queue_free()
+		current_screen = null
 
 	current_screen = SCREEN_SCENES[screen_name].instantiate()
 	screen_root.add_child(current_screen)
