@@ -13,6 +13,7 @@ const SHRINE := "shrine"
 const EVENT := "event"
 const DEFEAT := "defeat"
 const VICTORY := "victory"
+const GHOST_ROOM := "ghost_room"
 
 
 func change_to_main_menu() -> void:
@@ -65,6 +66,10 @@ func change_to_defeat(payload: Dictionary = {}) -> void:
 
 func change_to_victory(payload: Dictionary = {}) -> void:
 	_change_screen(VICTORY, payload)
+
+
+func change_to_ghost_room(payload: Dictionary = {}) -> void:
+	_change_screen(GHOST_ROOM, payload)
 
 
 func _change_screen(screen_name: String, payload: Variant = null) -> void:

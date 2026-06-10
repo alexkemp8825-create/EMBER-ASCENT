@@ -13,6 +13,7 @@ const SHRINE := "shrine"
 const EVENT := "event"
 const DEFEAT := "defeat"
 const VICTORY := "victory"
+const GHOST_ROOM := "ghost_room"
 
 const SCREEN_SCENES := {
 	MAIN_MENU: preload("res://scenes/ui/MainMenu.tscn"),
@@ -28,6 +29,7 @@ const SCREEN_SCENES := {
 	EVENT: preload("res://scenes/events/EventScreen.tscn"),
 	DEFEAT: preload("res://scenes/ui/DefeatScreen.tscn"),
 	VICTORY: preload("res://scenes/ui/VictoryScreen.tscn"),
+	GHOST_ROOM: preload("res://scenes/legacy/GhostRoomScreen.tscn"),
 }
 
 @onready var screen_root: Control = %ScreenRoot
@@ -109,3 +111,7 @@ func change_to_defeat(payload: Dictionary = {}) -> void:
 
 func change_to_victory(payload: Dictionary = {}) -> void:
 	change_screen(VICTORY, payload)
+
+
+func change_to_ghost_room(payload: Dictionary = {}) -> void:
+	change_screen(GHOST_ROOM, payload)

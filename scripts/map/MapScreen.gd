@@ -66,6 +66,10 @@ func _on_room_pressed(room: TowerRoomData) -> void:
 			SceneLoader.change_to_shrine()
 		TowerRoomDatabaseScript.ROOM_EVENT:
 			SceneLoader.change_to_event(room.source_card_id)
+		TowerRoomDatabaseScript.ROOM_GHOST:
+			SceneLoader.change_to_ghost_room({
+				"legacy_id": room.source_legacy_id,
+			})
 		_:
 			push_warning("Unhandled room type: %s" % room.room_type)
 

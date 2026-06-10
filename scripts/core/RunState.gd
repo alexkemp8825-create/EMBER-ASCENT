@@ -127,6 +127,27 @@ func complete_active_room() -> bool:
 	return completed
 
 
+func complete_ghost_active_room() -> bool:
+	if active_room_id == "":
+		return false
+
+	var ghost_room := get_tower_state().get_room(active_room_id)
+	if ghost_room == null or not ghost_room.is_ghost:
+		return false
+
+	var completed := get_tower_state().complete_ghost_room(active_room_id)
+	if completed:
+		current_node_id = get_tower_state().current_room_id
+		current_floor = ghost_room.floor
+
+	active_room_id = ""
+
+	if completed:
+		_persist_run_progress()
+
+	return completed
+
+
 func _persist_run_progress() -> void:
 	SaveManager.save_run()
 

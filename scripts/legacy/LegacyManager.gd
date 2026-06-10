@@ -148,6 +148,17 @@ func get_recent_legacy_runs(count: int) -> Array:
 	return recent_runs
 
 
+func get_legacy_run_by_id(legacy_id: String) -> LegacyRunData:
+	if legacy_id == "":
+		return null
+
+	for legacy_run in legacy_runs:
+		if legacy_run is LegacyRunDataScript and legacy_run.legacy_id == legacy_id:
+			return legacy_run
+
+	return null
+
+
 func get_random_legacy_run() -> LegacyRunData:
 	if legacy_runs.is_empty():
 		return null

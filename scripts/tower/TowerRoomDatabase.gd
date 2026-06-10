@@ -10,6 +10,11 @@ const ROOM_SHRINE := "shrine"
 const ROOM_REST := "rest"
 const ROOM_EVENT := "event"
 const ROOM_BOSS := "boss"
+const ROOM_GHOST := "ghost"
+
+const GHOST_STRENGTH_LOW := "low"
+const GHOST_STRENGTH_MEDIUM := "medium"
+const GHOST_STRENGTH_HIGH := "high"
 
 const ROOM_TYPES: Array[String] = [
 	ROOM_ENTRANCE,
@@ -21,6 +26,7 @@ const ROOM_TYPES: Array[String] = [
 	ROOM_REST,
 	ROOM_EVENT,
 	ROOM_BOSS,
+	ROOM_GHOST,
 ]
 
 const DEFAULT_DISPLAY_NAMES := {
@@ -33,6 +39,7 @@ const DEFAULT_DISPLAY_NAMES := {
 	ROOM_REST: "Rest Chamber",
 	ROOM_EVENT: "Strange Event",
 	ROOM_BOSS: "Boss",
+	ROOM_GHOST: "Ghost Echo",
 }
 
 
