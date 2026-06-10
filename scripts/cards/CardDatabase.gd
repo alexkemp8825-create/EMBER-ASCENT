@@ -17,7 +17,7 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "damage", "amount": 6},
 		],
-		"upgraded_id": "",
+		"upgraded_id": "ember_strike_plus",
 	},
 	"guard_up": {
 		"id": "guard_up",
@@ -30,7 +30,7 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "block", "amount": 5},
 		],
-		"upgraded_id": "",
+		"upgraded_id": "guard_up_plus",
 	},
 	"burning_oath": {
 		"id": "burning_oath",
@@ -44,7 +44,7 @@ const CARD_DEFINITIONS := {
 			{"type": "temp_strength", "amount": 2},
 			{"type": "draw", "amount": 1},
 		],
-		"upgraded_id": "",
+		"upgraded_id": "burning_oath_plus",
 	},
 	"burn": {
 		"id": "burn",
@@ -60,6 +60,46 @@ const CARD_DEFINITIONS := {
 		],
 		"upgraded_id": "",
 	},
+	"ember_strike_plus": {
+		"id": "ember_strike_plus",
+		"display_name": "Ember Strike+",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Deal 9 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 9},
+		],
+		"upgraded_id": "",
+	},
+	"guard_up_plus": {
+		"id": "guard_up_plus",
+		"display_name": "Guard Up+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 8 block.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 8},
+		],
+		"upgraded_id": "",
+	},
+	"burning_oath_plus": {
+		"id": "burning_oath_plus",
+		"display_name": "Burning Oath+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 2 Strength for this turn. Draw 2 cards.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "temp_strength", "amount": 2},
+			{"type": "draw", "amount": 2},
+		],
+		"upgraded_id": "",
+	},
 	"heavy_strike": {
 		"id": "heavy_strike",
 		"display_name": "Heavy Strike",
@@ -70,6 +110,19 @@ const CARD_DEFINITIONS := {
 		"target_type": "Enemy",
 		"effects": [
 			{"type": "damage", "amount": 10},
+		],
+		"upgraded_id": "heavy_strike_plus",
+	},
+	"heavy_strike_plus": {
+		"id": "heavy_strike_plus",
+		"display_name": "Heavy Strike+",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Upgraded",
+		"description": "Deal 14 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 14},
 		],
 		"upgraded_id": "",
 	},
@@ -83,6 +136,19 @@ const CARD_DEFINITIONS := {
 		"target_type": "Self",
 		"effects": [
 			{"type": "block", "amount": 8},
+		],
+		"upgraded_id": "iron_wall_plus",
+	},
+	"iron_wall_plus": {
+		"id": "iron_wall_plus",
+		"display_name": "Iron Wall+",
+		"card_type": "Skill",
+		"cost": 2,
+		"rarity": "Upgraded",
+		"description": "Gain 12 block.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 12},
 		],
 		"upgraded_id": "",
 	},
@@ -98,6 +164,20 @@ const CARD_DEFINITIONS := {
 			{"type": "block", "amount": 4},
 			{"type": "draw", "amount": 1},
 		],
+		"upgraded_id": "deflect_plus",
+	},
+	"deflect_plus": {
+		"id": "deflect_plus",
+		"display_name": "Deflect+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 5 block. Draw 1 card.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 5},
+			{"type": "draw", "amount": 1},
+		],
 		"upgraded_id": "",
 	},
 	"second_wind": {
@@ -110,6 +190,19 @@ const CARD_DEFINITIONS := {
 		"target_type": "Self",
 		"effects": [
 			{"type": "heal", "amount": 3},
+		],
+		"upgraded_id": "second_wind_plus",
+	},
+	"second_wind_plus": {
+		"id": "second_wind_plus",
+		"display_name": "Second Wind+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Heal 5 HP.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "heal", "amount": 5},
 		],
 		"upgraded_id": "",
 	},
@@ -124,6 +217,19 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "block", "amount": 6},
 		],
+		"upgraded_id": "ember_wall_plus",
+	},
+	"ember_wall_plus": {
+		"id": "ember_wall_plus",
+		"display_name": "Ember Wall+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 9 block.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 9},
+		],
 		"upgraded_id": "",
 	},
 	"piercing_blow": {
@@ -136,6 +242,19 @@ const CARD_DEFINITIONS := {
 		"target_type": "Enemy",
 		"effects": [
 			{"type": "damage", "amount": 7},
+		],
+		"upgraded_id": "piercing_blow_plus",
+	},
+	"piercing_blow_plus": {
+		"id": "piercing_blow_plus",
+		"display_name": "Piercing Blow+",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Deal 10 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 10},
 		],
 		"upgraded_id": "",
 	},
@@ -150,6 +269,19 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "damage", "amount": 9},
 		],
+		"upgraded_id": "molten_slash_plus",
+	},
+	"molten_slash_plus": {
+		"id": "molten_slash_plus",
+		"display_name": "Molten Slash+",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Upgraded",
+		"description": "Deal 12 damage.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 12},
+		],
 		"upgraded_id": "",
 	},
 	"rally": {
@@ -163,6 +295,19 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "draw", "amount": 2},
 		],
+		"upgraded_id": "rally_plus",
+	},
+	"rally_plus": {
+		"id": "rally_plus",
+		"display_name": "Rally+",
+		"card_type": "Skill",
+		"cost": 0,
+		"rarity": "Upgraded",
+		"description": "Draw 3 cards.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "draw", "amount": 3},
+		],
 		"upgraded_id": "",
 	},
 	"intimidating_shout": {
@@ -175,6 +320,20 @@ const CARD_DEFINITIONS := {
 		"target_type": "Self",
 		"effects": [
 			{"type": "block", "amount": 4},
+			{"type": "draw", "amount": 1},
+		],
+		"upgraded_id": "intimidating_shout_plus",
+	},
+	"intimidating_shout_plus": {
+		"id": "intimidating_shout_plus",
+		"display_name": "Intimidating Shout+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 5 block. Draw 1 card.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 5},
 			{"type": "draw", "amount": 1},
 		],
 		"upgraded_id": "",
@@ -191,6 +350,20 @@ const CARD_DEFINITIONS := {
 			{"type": "damage", "amount": 4},
 			{"type": "enemy_burn", "amount": 2},
 		],
+		"upgraded_id": "cinder_bolt_plus",
+	},
+	"cinder_bolt_plus": {
+		"id": "cinder_bolt_plus",
+		"display_name": "Cinder Bolt+",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Deal 5 damage. Apply 3 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 5},
+			{"type": "enemy_burn", "amount": 3},
+		],
 		"upgraded_id": "",
 	},
 	"witch_flame": {
@@ -204,6 +377,20 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "damage", "amount": 3},
 			{"type": "enemy_burn", "amount": 3},
+		],
+		"upgraded_id": "witch_flame_plus",
+	},
+	"witch_flame_plus": {
+		"id": "witch_flame_plus",
+		"display_name": "Witch Flame+",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Deal 4 damage. Apply 4 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 4},
+			{"type": "enemy_burn", "amount": 4},
 		],
 		"upgraded_id": "",
 	},
@@ -219,6 +406,20 @@ const CARD_DEFINITIONS := {
 			{"type": "block", "amount": 4},
 			{"type": "enemy_burn", "amount": 1},
 		],
+		"upgraded_id": "ember_barrier_plus",
+	},
+	"ember_barrier_plus": {
+		"id": "ember_barrier_plus",
+		"display_name": "Ember Barrier+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 6 block. Apply 2 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "block", "amount": 6},
+			{"type": "enemy_burn", "amount": 2},
+		],
 		"upgraded_id": "",
 	},
 	"cinder_wave": {
@@ -231,6 +432,20 @@ const CARD_DEFINITIONS := {
 		"target_type": "Enemy",
 		"effects": [
 			{"type": "enemy_burn", "amount": 4},
+			{"type": "draw", "amount": 1},
+		],
+		"upgraded_id": "cinder_wave_plus",
+	},
+	"cinder_wave_plus": {
+		"id": "cinder_wave_plus",
+		"display_name": "Cinder Wave+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Apply 6 Burn. Draw 1 card.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "enemy_burn", "amount": 6},
 			{"type": "draw", "amount": 1},
 		],
 		"upgraded_id": "",
@@ -246,6 +461,19 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "enemy_burn", "amount": 2},
 		],
+		"upgraded_id": "scorch_plus",
+	},
+	"scorch_plus": {
+		"id": "scorch_plus",
+		"display_name": "Scorch+",
+		"card_type": "Skill",
+		"cost": 0,
+		"rarity": "Upgraded",
+		"description": "Apply 3 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "enemy_burn", "amount": 3},
+		],
 		"upgraded_id": "",
 	},
 	"fire_sigil": {
@@ -258,6 +486,19 @@ const CARD_DEFINITIONS := {
 		"target_type": "Enemy",
 		"effects": [
 			{"type": "enemy_burn", "amount": 5},
+		],
+		"upgraded_id": "fire_sigil_plus",
+	},
+	"fire_sigil_plus": {
+		"id": "fire_sigil_plus",
+		"display_name": "Fire Sigil+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Apply 7 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "enemy_burn", "amount": 7},
 		],
 		"upgraded_id": "",
 	},
@@ -273,6 +514,20 @@ const CARD_DEFINITIONS := {
 			{"type": "damage", "amount": 5},
 			{"type": "enemy_burn", "amount": 3},
 		],
+		"upgraded_id": "cinder_lance_plus",
+	},
+	"cinder_lance_plus": {
+		"id": "cinder_lance_plus",
+		"display_name": "Cinder Lance+",
+		"card_type": "Attack",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Deal 6 damage. Apply 4 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 6},
+			{"type": "enemy_burn", "amount": 4},
+		],
 		"upgraded_id": "",
 	},
 	"blazefall": {
@@ -287,6 +542,20 @@ const CARD_DEFINITIONS := {
 			{"type": "damage", "amount": 7},
 			{"type": "enemy_burn", "amount": 4},
 		],
+		"upgraded_id": "blazefall_plus",
+	},
+	"blazefall_plus": {
+		"id": "blazefall_plus",
+		"display_name": "Blazefall+",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Upgraded",
+		"description": "Deal 9 damage. Apply 5 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 9},
+			{"type": "enemy_burn", "amount": 5},
+		],
 		"upgraded_id": "",
 	},
 	"pyre_shield": {
@@ -299,6 +568,20 @@ const CARD_DEFINITIONS := {
 		"target_type": "Self",
 		"effects": [
 			{"type": "block", "amount": 5},
+			{"type": "draw", "amount": 1},
+		],
+		"upgraded_id": "pyre_shield_plus",
+	},
+	"pyre_shield_plus": {
+		"id": "pyre_shield_plus",
+		"display_name": "Pyre Shield+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Gain 7 block. Draw 1 card.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "block", "amount": 7},
 			{"type": "draw", "amount": 1},
 		],
 		"upgraded_id": "",
@@ -315,6 +598,20 @@ const CARD_DEFINITIONS := {
 			{"type": "enemy_burn", "amount": 3},
 			{"type": "temp_strength", "amount": 1},
 		],
+		"upgraded_id": "feed_the_flame_plus",
+	},
+	"feed_the_flame_plus": {
+		"id": "feed_the_flame_plus",
+		"display_name": "Feed the Flame+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Apply 4 Burn. Gain 2 Strength this turn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "enemy_burn", "amount": 4},
+			{"type": "temp_strength", "amount": 2},
+		],
 		"upgraded_id": "",
 	},
 	"inferno_chant": {
@@ -329,6 +626,20 @@ const CARD_DEFINITIONS := {
 			{"type": "damage", "amount": 8},
 			{"type": "enemy_burn", "amount": 6},
 		],
+		"upgraded_id": "inferno_chant_plus",
+	},
+	"inferno_chant_plus": {
+		"id": "inferno_chant_plus",
+		"display_name": "Inferno Chant+",
+		"card_type": "Attack",
+		"cost": 2,
+		"rarity": "Upgraded",
+		"description": "Deal 10 damage. Apply 8 Burn.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "damage", "amount": 10},
+			{"type": "enemy_burn", "amount": 8},
+		],
 		"upgraded_id": "",
 	},
 	"ash_pact": {
@@ -342,6 +653,19 @@ const CARD_DEFINITIONS := {
 		"effects": [
 			{"type": "enemy_burn_all", "amount": 3},
 		],
+		"upgraded_id": "ash_pact_plus",
+	},
+	"ash_pact_plus": {
+		"id": "ash_pact_plus",
+		"display_name": "Ash Pact+",
+		"card_type": "Skill",
+		"cost": 1,
+		"rarity": "Upgraded",
+		"description": "Apply 4 Burn to ALL enemies.",
+		"target_type": "Self",
+		"effects": [
+			{"type": "enemy_burn_all", "amount": 4},
+		],
 		"upgraded_id": "",
 	},
 	"smolder_hex": {
@@ -354,6 +678,20 @@ const CARD_DEFINITIONS := {
 		"target_type": "Enemy",
 		"effects": [
 			{"type": "enemy_burn", "amount": 2},
+			{"type": "draw", "amount": 2},
+		],
+		"upgraded_id": "smolder_hex_plus",
+	},
+	"smolder_hex_plus": {
+		"id": "smolder_hex_plus",
+		"display_name": "Smolder Hex+",
+		"card_type": "Skill",
+		"cost": 0,
+		"rarity": "Upgraded",
+		"description": "Apply 3 Burn. Draw 2 cards.",
+		"target_type": "Enemy",
+		"effects": [
+			{"type": "enemy_burn", "amount": 3},
 			{"type": "draw", "amount": 2},
 		],
 		"upgraded_id": "",
@@ -436,7 +774,11 @@ func _pick_shopable_cards(class_id: String, count: int) -> Array[CardData]:
 	var candidates: Array[CardData] = []
 
 	for card_data in get_cards_by_class(class_id):
-		if card_data.rarity != "Starter" and card_data.card_type != "Status":
+		if (
+			card_data.rarity != "Starter"
+			and card_data.rarity != "Upgraded"
+			and card_data.card_type != "Status"
+		):
 			candidates.append(card_data)
 
 	var results: Array[CardData] = []

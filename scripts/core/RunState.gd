@@ -205,6 +205,42 @@ func remove_card_from_deck(card_id: String, min_deck_size: int = 5) -> bool:
 	return true
 
 
+func count_cards_in_deck(card_id: String) -> int:
+	var count := 0
+	for deck_card_id in deck:
+		if deck_card_id == card_id:
+			count += 1
+
+	return count
+
+
+func can_upgrade_card(card_id: String) -> bool:
+	if card_id == "":
+		return false
+
+	var card_database := CardDatabase.new()
+	var card_data := card_database.get_card(card_id)
+	if card_data == null or card_data.upgraded_id == "":
+		return false
+
+	return deck.has(card_id)
+
+
+func upgrade_card_in_deck(card_id: String) -> String:
+	if not can_upgrade_card(card_id):
+		return ""
+
+	var card_database := CardDatabase.new()
+	var card_data := card_database.get_card(card_id)
+	var upgraded_id := card_data.upgraded_id
+	var card_index := deck.find(card_id)
+	if card_index == -1:
+		return ""
+
+	deck[card_index] = upgraded_id
+	return upgraded_id
+
+
 func get_unique_deck_card_ids() -> Array[String]:
 	var unique_ids: Array[String] = []
 	var seen_ids := {}
