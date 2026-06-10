@@ -2,6 +2,7 @@ class_name TowerGenerator
 extends RefCounted
 
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
+const EventDatabaseScript := preload("res://scripts/events/EventDatabase.gd")
 
 const FLOOR_ENTRANCE := 0
 const FLOOR_FIRST_BATTLE := 1
@@ -18,15 +19,28 @@ static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
+	var event_database := EventDatabaseScript.new()
 
 	var entrance := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_ENTRANCE, FLOOR_ENTRANCE, 0)
 	entrance.completed = true
 
 	var first_battle := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_BATTLE, FLOOR_FIRST_BATTLE, 0)
-	var left_branch := _pick_floor_two_left_room(rng)
-	var right_branch := _pick_floor_two_right_room(rng)
-	var rest_room := tower_state.add_room_at(left_branch, FLOOR_BRANCH_A, -1)
-	var market_room := tower_state.add_room_at(right_branch, FLOOR_BRANCH_A, 1)
+	var left_branch := _create_branch_room(
+		tower_state,
+		_pick_floor_two_left_room(rng),
+		FLOOR_BRANCH_A,
+		-1,
+		rng,
+		event_database
+	)
+	var right_branch := _create_branch_room(
+		tower_state,
+		_pick_floor_two_right_room(rng),
+		FLOOR_BRANCH_A,
+		1,
+		rng,
+		event_database
+	)
 	var convergence_battle := tower_state.add_room_at(
 		TowerRoomDatabaseScript.ROOM_BATTLE,
 		FLOOR_CONVERGENCE_BATTLE,
@@ -40,10 +54,10 @@ static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
 	var boss_room := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_BOSS, FLOOR_BOSS, 0)
 
 	tower_state.connect_rooms(entrance.room_id, first_battle.room_id)
-	tower_state.connect_rooms(first_battle.room_id, rest_room.room_id)
-	tower_state.connect_rooms(first_battle.room_id, market_room.room_id)
-	tower_state.connect_rooms(rest_room.room_id, convergence_battle.room_id)
-	tower_state.connect_rooms(market_room.room_id, convergence_battle.room_id)
+	tower_state.connect_rooms(first_battle.room_id, left_branch.room_id)
+	tower_state.connect_rooms(first_battle.room_id, right_branch.room_id)
+	tower_state.connect_rooms(left_branch.room_id, convergence_battle.room_id)
+	tower_state.connect_rooms(right_branch.room_id, convergence_battle.room_id)
 	tower_state.connect_rooms(convergence_battle.room_id, forge_room.room_id)
 	tower_state.connect_rooms(convergence_battle.room_id, shrine_room.room_id)
 	tower_state.connect_rooms(convergence_battle.room_id, observatory_room.room_id)
@@ -55,10 +69,26 @@ static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
 	tower_state.highest_floor = FLOOR_BOSS
 
 
+static func _create_branch_room(
+	tower_state: TowerState,
+	room_type: String,
+	floor: int,
+	lane: int,
+	rng: RandomNumberGenerator,
+	event_database: EventDatabase
+) -> TowerRoomData:
+	if room_type == TowerRoomDatabaseScript.ROOM_EVENT:
+		var event_id := event_database.pick_random_event_id(rng)
+		return tower_state.add_room_at(room_type, floor, lane, event_id)
+
+	return tower_state.add_room_at(room_type, floor, lane)
+
+
 static func _pick_floor_two_left_room(rng: RandomNumberGenerator) -> String:
 	var options: Array[String] = [
 		TowerRoomDatabaseScript.ROOM_REST,
 		TowerRoomDatabaseScript.ROOM_SHRINE,
+		TowerRoomDatabaseScript.ROOM_EVENT,
 	]
 	return options[rng.randi_range(0, options.size() - 1)]
 
@@ -67,6 +97,7 @@ static func _pick_floor_two_right_room(rng: RandomNumberGenerator) -> String:
 	var options: Array[String] = [
 		TowerRoomDatabaseScript.ROOM_MARKET,
 		TowerRoomDatabaseScript.ROOM_OBSERVATORY,
+		TowerRoomDatabaseScript.ROOM_EVENT,
 	]
 	return options[rng.randi_range(0, options.size() - 1)]
 

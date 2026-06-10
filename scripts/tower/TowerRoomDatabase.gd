@@ -8,6 +8,7 @@ const ROOM_OBSERVATORY := "observatory"
 const ROOM_MARKET := "market"
 const ROOM_SHRINE := "shrine"
 const ROOM_REST := "rest"
+const ROOM_EVENT := "event"
 const ROOM_BOSS := "boss"
 
 const ROOM_TYPES: Array[String] = [
@@ -18,6 +19,7 @@ const ROOM_TYPES: Array[String] = [
 	ROOM_MARKET,
 	ROOM_SHRINE,
 	ROOM_REST,
+	ROOM_EVENT,
 	ROOM_BOSS,
 ]
 
@@ -29,6 +31,7 @@ const DEFAULT_DISPLAY_NAMES := {
 	ROOM_MARKET: "Market",
 	ROOM_SHRINE: "Shrine",
 	ROOM_REST: "Rest Chamber",
+	ROOM_EVENT: "Strange Event",
 	ROOM_BOSS: "Boss",
 }
 

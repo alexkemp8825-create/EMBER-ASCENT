@@ -4,6 +4,7 @@ class_name TowerState
 const TowerRoomDataScript := preload("res://scripts/tower/TowerRoomData.gd")
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
+const EventDatabaseScript := preload("res://scripts/events/EventDatabase.gd")
 
 const ROOM_VERTICAL_SPACING := 160.0
 const HORIZONTAL_LANE_SPACING := 180.0
@@ -36,6 +37,7 @@ func add_room_at(
 ) -> TowerRoomData:
 	var room_id := _generate_room_id(room_type)
 	var room := _create_room(room_id, room_type, source_card_id, floor, lane)
+	_apply_event_room_metadata(room)
 	rooms.append(room)
 	highest_floor = max(highest_floor, floor)
 	return room
@@ -160,6 +162,19 @@ func _create_room(
 		room_position,
 		source_card_id
 	)
+
+
+func _apply_event_room_metadata(room: TowerRoomData) -> void:
+	if room.room_type != TowerRoomDatabaseScript.ROOM_EVENT:
+		return
+
+	if room.source_card_id == "":
+		return
+
+	var event_database := EventDatabaseScript.new()
+	var event_data := event_database.get_event(room.source_card_id)
+	if event_data != null:
+		room.display_name = event_data.title
 
 
 func _generate_room_id(room_type: String) -> String:
