@@ -71,9 +71,9 @@ static func is_elite_encounter(encounter_id: String) -> bool:
 
 static func get_gold_reward(encounter_id: String, floor: int, is_boss: bool, is_elite: bool) -> int:
 	var base_gold := int(GOLD_BY_ENCOUNTER.get(encounter_id, 10))
-	var floor_bonus := max(floor, 0) * 2
-	var act_bonus := max(RunState.current_act - 1, 0) * ACT_GOLD_BONUS
-	var total := base_gold + floor_bonus + act_bonus
+	var floor_bonus: int = maxi(floor, 0) * 2
+	var act_bonus: int = maxi(RunState.current_act - 1, 0) * ACT_GOLD_BONUS
+	var total: int = base_gold + floor_bonus + act_bonus
 
 	if is_boss:
 		total += BOSS_GOLD_BONUS

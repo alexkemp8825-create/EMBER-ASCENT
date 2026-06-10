@@ -41,7 +41,7 @@ static func _apply_effect(effect: Dictionary) -> void:
 			var heal_amount := int(effect.get("amount", 0))
 			RunState.current_hp = min(RunState.current_hp + heal_amount, RunState.max_hp)
 		"damage":
-			RunState.current_hp = max(RunState.current_hp - int(effect.get("amount", 0)), 1)
+			RunState.current_hp = max(RunState.current_hp - int(effect.get("amount", 0)), 0)
 		"max_hp":
 			var bonus := int(effect.get("amount", 0))
 			RunState.max_hp += bonus

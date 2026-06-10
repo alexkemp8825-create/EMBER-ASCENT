@@ -77,8 +77,9 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="PlayerTitle" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "Ash Knight"
+text = "Adventurer"
 horizontal_alignment = 1
 
 [node name="PlayerStatsLabel" type="Label" parent="MarginContainer/Content/Battlefield/PlayerPanel/PlayerMargin/PlayerContent"]
@@ -157,3 +158,45 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 56)
 layout_mode = 2
 text = "End Turn"
+
+[node name="DefeatPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="DefeatMargin" type="MarginContainer" parent="DefeatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="DefeatContent" type="VBoxContainer" parent="DefeatPanel/DefeatMargin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="DefeatTitle" type="Label" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+layout_mode = 2
+text = "Defeated"
+horizontal_alignment = 1
+
+[node name="DefeatMessageLabel" type="Label" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Your embers fade in the tower's silence."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DefeatContinueButton" type="Button" parent="DefeatPanel/DefeatMargin/DefeatContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Return to Main Menu"

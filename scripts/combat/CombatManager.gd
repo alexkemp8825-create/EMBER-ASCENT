@@ -20,8 +20,12 @@ const ENEMY_VIEW_SCENE := preload("res://scenes/combat/EnemyView.tscn")
 const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 
 @onready var encounter_title: Label = %EncounterTitle
+@onready var player_title: Label = %PlayerTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
 @onready var player_stats_label: Label = %PlayerStatsLabel
+@onready var defeat_panel: PanelContainer = %DefeatPanel
+@onready var defeat_message_label: Label = %DefeatMessageLabel
+@onready var defeat_continue_button: Button = %DefeatContinueButton
 @onready var pile_stats_label: Label = %PileStatsLabel
 @onready var hand_container: HBoxContainer = %HandContainer
 @onready var combat_log_label: Label = %CombatLogLabel
@@ -50,6 +54,8 @@ var _temporary_strength: int = 0
 
 func _ready() -> void:
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
+	defeat_continue_button.pressed.connect(_on_defeat_continue_pressed)
+	defeat_panel.visible = false
 	call_deferred("_start_combat")
 
 
@@ -63,6 +69,7 @@ func _start_combat() -> void:
 
 	_combat_started = true
 	encounter_title.text = "Encounter: %s" % encounter_id
+	player_title.text = _get_player_display_name()
 	hp = RunState.current_hp if RunState.current_hp > 0 else 75
 	block = 0
 	energy = STARTING_ENERGY
@@ -108,12 +115,14 @@ func _create_enemy_encounter() -> Array[EnemyInstance]:
 func _get_enemy_ids_for_current_encounter() -> Array[String]:
 	var enemy_ids: Array[String] = []
 
-	match encounter_id:
+	var known_encounters := [
 		"charred_rat", "furnace_cultist", "molten_guard", "bellows_saint",
-		"ember_warden", "cinder_colossus", "furnace_hound", "ash_zealot", "ember_regent":
-			enemy_ids.append(encounter_id)
-		_:
-			enemy_ids.append("charred_rat")
+		"ember_warden", "cinder_colossus", "furnace_hound", "ash_zealot", "ember_regent",
+	]
+	if known_encounters.has(encounter_id):
+		enemy_ids.append(encounter_id)
+	else:
+		enemy_ids.append("charred_rat")
 
 	return enemy_ids
 
@@ -189,6 +198,7 @@ func _resolve_enemy_turn() -> void:
 		if not enemy.is_alive():
 			continue
 
+		enemy.block = 0
 		var action := _get_enemy_action(enemy)
 		match action.get("type", ""):
 			"attack":
@@ -344,7 +354,7 @@ func _gain_block(amount: int) -> void:
 
 func _heal(amount: int) -> void:
 	var max_hp := RunState.max_hp if RunState.max_hp > 0 else 75
-	var healed := min(amount, max_hp - hp)
+	var healed: int = mini(amount, max_hp - hp)
 	hp += healed
 	_log("Healed %d HP." % healed)
 
@@ -491,9 +501,21 @@ func _handle_victory() -> void:
 
 func _handle_defeat() -> void:
 	_log("Defeat.")
+	end_turn_button.disabled = true
+	defeat_message_label.text = "Your embers fade in the tower's silence."
+	defeat_panel.visible = true
+
+
+func _on_defeat_continue_pressed() -> void:
 	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
+
+
+func _get_player_display_name() -> String:
+	var class_database := ClassDatabase.new()
+	var class_definition := class_database.get_class_definition(RunState.selected_class)
+	return str(class_definition.get("display_name", "Adventurer"))
 
 
 func _apply_combat_start_relics() -> void:

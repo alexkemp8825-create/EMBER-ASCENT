@@ -36,7 +36,11 @@ func _on_class_selected(class_id: String) -> void:
 		return
 
 	_start_run(class_id)
-	SaveManager.save_run()
+
+	if not SaveManager.save_run():
+		status_label.text = "Failed to save your run. Please try again."
+		RunState.reset_run()
+		return
 
 	var class_definition := _class_database.get_class_definition(class_id)
 	status_label.text = "%s selected. Entering The Living Tower..." % class_definition.get("display_name", class_id)

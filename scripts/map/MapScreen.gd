@@ -7,11 +7,20 @@ const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
 @onready var tower_map_canvas: Control = %TowerMapCanvas
+@onready var victory_panel: PanelContainer = %VictoryPanel
+@onready var victory_message_label: Label = %VictoryMessageLabel
+@onready var new_run_button: Button = %NewRunButton
+@onready var main_menu_button: Button = %MainMenuButton
+@onready var abandon_run_button: Button = %AbandonRunButton
 
 
 func _ready() -> void:
 	if tower_map_canvas.has_signal("room_pressed"):
 		tower_map_canvas.room_pressed.connect(_on_room_pressed)
+
+	new_run_button.pressed.connect(_on_new_run_pressed)
+	main_menu_button.pressed.connect(_on_main_menu_pressed)
+	abandon_run_button.pressed.connect(_on_abandon_run_pressed)
 
 	_refresh_map()
 
@@ -30,15 +39,23 @@ func _refresh_map() -> void:
 	if tower_map_canvas.has_method("refresh"):
 		tower_map_canvas.refresh(tower_state)
 
-	if tower_state.is_boss_defeated() and RunState.current_act >= RewardManagerScript.FINAL_ACT:
-		status_label.text = "Run complete! The tower falls silent."
+	if RunState.consume_act_transition_message():
+		status_label.text = "Act %d begins. The tower heals you for 30%% of your max HP." % RunState.current_act
+
+	if RunState.is_run_complete():
+		_show_victory_panel()
 		return
+
+	victory_panel.visible = false
+	abandon_run_button.visible = true
+	tower_map_canvas.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	var available_rooms := tower_state.get_available_rooms()
 	if available_rooms.is_empty():
 		status_label.text = "No paths remain from here."
 	else:
-		status_label.text = "Choose your next room."
+		if status_label.text == "" or not status_label.text.begins_with("Act "):
+			status_label.text = "Choose your next room."
 
 
 func _on_room_pressed(room: TowerRoomData) -> void:
@@ -96,3 +113,43 @@ func _get_battle_encounter_id(floor: int) -> String:
 		return "charred_rat"
 
 	return "furnace_cultist"
+
+
+func _show_victory_panel() -> void:
+	victory_panel.visible = true
+	abandon_run_button.visible = false
+	tower_map_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	victory_message_label.text = (
+		"You have conquered the Living Tower.\n"
+		+ "Class: %s  |  Final HP: %d/%d  |  Gold: %d"
+	) % [
+		_get_class_display_name(),
+		RunState.current_hp,
+		RunState.max_hp,
+		RunState.gold,
+	]
+	status_label.text = "Run complete! The tower falls silent."
+
+
+func _get_class_display_name() -> String:
+	var class_database := ClassDatabase.new()
+	var class_definition := class_database.get_class_definition(RunState.selected_class)
+	return str(class_definition.get("display_name", "Adventurer"))
+
+
+func _on_new_run_pressed() -> void:
+	SaveManager.delete_save()
+	RunState.reset_run()
+	SceneLoader.change_to_class_select()
+
+
+func _on_main_menu_pressed() -> void:
+	SaveManager.delete_save()
+	RunState.reset_run()
+	SceneLoader.change_to_main_menu()
+
+
+func _on_abandon_run_pressed() -> void:
+	SaveManager.delete_save()
+	RunState.reset_run()
+	SceneLoader.change_to_main_menu()

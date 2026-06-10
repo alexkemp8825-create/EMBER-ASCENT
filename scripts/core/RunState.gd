@@ -19,6 +19,7 @@ var current_node_id: String = ""
 var run_seed: int = 0
 var tower_state: TowerState
 var active_room_id: String = ""
+var _show_act_transition_message: bool = false
 
 
 func reset_run() -> void:
@@ -36,6 +37,7 @@ func reset_run() -> void:
 	run_seed = 0
 	tower_state = null
 	active_room_id = ""
+	_show_act_transition_message = false
 
 
 func has_active_run() -> bool:
@@ -75,6 +77,7 @@ func deserialize(data: Dictionary) -> void:
 	current_node_id = str(data.get("current_node_id", ""))
 	run_seed = int(data.get("run_seed", 0))
 	active_room_id = ""
+	_show_act_transition_message = false
 
 	deck.clear()
 	for card_id in data.get("deck", []):
@@ -110,6 +113,7 @@ func advance_to_next_act() -> void:
 	current_act += 1
 	var heal_amount := int(ceil(float(max_hp) * 0.3))
 	current_hp = min(current_hp + heal_amount, max_hp)
+	_show_act_transition_message = true
 	tower_state = null
 	create_new_tower()
 
@@ -228,3 +232,11 @@ func add_relic(relic_id: String) -> void:
 
 func has_relic(relic_id: String) -> bool:
 	return relics.has(relic_id)
+
+
+func consume_act_transition_message() -> bool:
+	if not _show_act_transition_message:
+		return false
+
+	_show_act_transition_message = false
+	return true

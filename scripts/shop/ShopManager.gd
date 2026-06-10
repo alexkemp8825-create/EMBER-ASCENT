@@ -12,8 +12,8 @@ const REMOVE_CARD_BASE_PRICE := 75
 static func build_shop_inventory(floor: int, act: int) -> Dictionary:
 	var card_database := CardDatabase.new()
 	var relic_database := RelicDatabase.new()
-	var floor_scale := max(floor, 0)
-	var act_scale := max(act, 1)
+	var floor_scale: int = maxi(floor, 0)
+	var act_scale: int = maxi(act, 1)
 
 	var card_offers: Array[Dictionary] = []
 	for card_data in card_database.get_shop_cards(RunState.selected_class, CARD_OFFER_COUNT):
