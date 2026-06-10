@@ -44,6 +44,60 @@ const ENEMY_DEFINITIONS := {
 			{"type": "attack", "amount": 24},
 		],
 	},
+	"ember_warden": {
+		"id": "ember_warden",
+		"display_name": "Ember Warden",
+		"max_hp": 65,
+		"actions": [
+			{"type": "block", "amount": 10},
+			{"type": "attack", "amount": 11},
+			{"type": "buff_strength", "amount": 2},
+			{"type": "attack", "amount": 14},
+		],
+	},
+	"cinder_colossus": {
+		"id": "cinder_colossus",
+		"display_name": "Cinder Colossus",
+		"max_hp": 88,
+		"actions": [
+			{"type": "attack", "amount": 10},
+			{"type": "block", "amount": 12},
+			{"type": "attack_block", "attack_amount": 8, "block_amount": 8},
+			{"type": "attack", "amount": 16},
+		],
+	},
+	"furnace_hound": {
+		"id": "furnace_hound",
+		"display_name": "Furnace Hound",
+		"max_hp": 42,
+		"actions": [
+			{"type": "attack", "amount": 7},
+			{"type": "attack", "amount": 9},
+			{"type": "add_burn", "amount": 1},
+		],
+	},
+	"ash_zealot": {
+		"id": "ash_zealot",
+		"display_name": "Ash Zealot",
+		"max_hp": 58,
+		"actions": [
+			{"type": "buff_strength", "amount": 3},
+			{"type": "attack", "amount": 9},
+			{"type": "attack", "amount": 11},
+		],
+	},
+	"ember_regent": {
+		"id": "ember_regent",
+		"display_name": "The Ember Regent",
+		"max_hp": 155,
+		"actions": [
+			{"type": "attack", "amount": 14},
+			{"type": "block", "amount": 18},
+			{"type": "add_burn", "amount": 2},
+			{"type": "big_attack_warning"},
+			{"type": "attack", "amount": 28},
+		],
+	},
 }
 
 var _enemies: Dictionary = {}

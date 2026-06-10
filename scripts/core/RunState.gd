@@ -2,6 +2,9 @@ extends Node
 
 const TowerStateScript := preload("res://scripts/tower/TowerState.gd")
 
+const FINAL_ACT := 2
+const ACT_SEED_OFFSET := 9973
+
 var selected_class: String = ""
 var max_hp: int = 0
 var current_hp: int = 0
@@ -89,10 +92,34 @@ func deserialize(data: Dictionary) -> void:
 
 func create_new_tower() -> void:
 	tower_state = TowerStateScript.new()
-	var seed_value := run_seed if run_seed != 0 else int(Time.get_unix_time_from_system())
-	tower_state.create_new_tower(seed_value)
+	var seed_value := _get_tower_seed_for_act()
+	tower_state.create_new_tower(seed_value, current_act)
 	current_floor = 0
 	current_node_id = tower_state.current_room_id
+
+
+func _get_tower_seed_for_act() -> int:
+	var base_seed := run_seed if run_seed != 0 else int(Time.get_unix_time_from_system())
+	return base_seed + ((current_act - 1) * ACT_SEED_OFFSET)
+
+
+func advance_to_next_act() -> void:
+	if current_act >= FINAL_ACT:
+		return
+
+	current_act += 1
+	var heal_amount := int(ceil(float(max_hp) * 0.3))
+	current_hp = min(current_hp + heal_amount, max_hp)
+	tower_state = null
+	create_new_tower()
+
+
+func is_run_complete() -> bool:
+	return (
+		current_act >= FINAL_ACT
+		and tower_state != null
+		and tower_state.is_boss_defeated()
+	)
 
 
 func get_tower_state() -> TowerState:
@@ -128,10 +155,16 @@ func complete_active_room() -> bool:
 
 
 func _persist_run_progress() -> void:
-	if get_tower_state().is_boss_defeated():
-		SaveManager.delete_save()
-	else:
+	if not get_tower_state().is_boss_defeated():
 		SaveManager.save_run()
+		return
+
+	if current_act >= FINAL_ACT:
+		SaveManager.delete_save()
+		return
+
+	advance_to_next_act()
+	SaveManager.save_run()
 
 
 func add_card_to_deck(card_id: String) -> void:

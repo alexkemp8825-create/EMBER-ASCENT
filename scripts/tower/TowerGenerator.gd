@@ -11,11 +11,23 @@ const FLOOR_CONVERGENCE_BATTLE := 3
 const FLOOR_SPECIAL_BRANCH := 4
 const FLOOR_BOSS := 5
 
+const ACT_1 := 1
+const ACT_2 := 2
+
 
 static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
+	_generate_act(tower_state, seed_value, ACT_1)
+
+
+static func generate_act_two(tower_state: TowerState, seed_value: int) -> void:
+	_generate_act(tower_state, seed_value, ACT_2)
+
+
+static func _generate_act(tower_state: TowerState, seed_value: int, act: int) -> void:
 	tower_state.rooms.clear()
 	tower_state.connections.clear()
 	tower_state.tower_seed = seed_value
+	tower_state.act = act
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
@@ -27,19 +39,21 @@ static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
 	var first_battle := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_BATTLE, FLOOR_FIRST_BATTLE, 0)
 	var left_branch := _create_branch_room(
 		tower_state,
-		_pick_floor_two_left_room(rng),
+		_pick_floor_two_left_room(rng, act),
 		FLOOR_BRANCH_A,
 		-1,
 		rng,
-		event_database
+		event_database,
+		act
 	)
 	var right_branch := _create_branch_room(
 		tower_state,
-		_pick_floor_two_right_room(rng),
+		_pick_floor_two_right_room(rng, act),
 		FLOOR_BRANCH_A,
 		1,
 		rng,
-		event_database
+		event_database,
+		act
 	)
 	var convergence_battle := tower_state.add_room_at(
 		TowerRoomDatabaseScript.ROOM_BATTLE,
@@ -75,30 +89,53 @@ static func _create_branch_room(
 	floor: int,
 	lane: int,
 	rng: RandomNumberGenerator,
-	event_database: EventDatabase
+	event_database: EventDatabase,
+	act: int
 ) -> TowerRoomData:
 	if room_type == TowerRoomDatabaseScript.ROOM_EVENT:
 		var event_id := event_database.pick_random_event_id(rng)
 		return tower_state.add_room_at(room_type, floor, lane, event_id)
 
+	if room_type == TowerRoomDatabaseScript.ROOM_ELITE:
+		var encounter_id := _pick_elite_encounter(rng, act)
+		return tower_state.add_room_at(room_type, floor, lane, encounter_id)
+
 	return tower_state.add_room_at(room_type, floor, lane)
 
 
-static func _pick_floor_two_left_room(rng: RandomNumberGenerator) -> String:
+static func _pick_elite_encounter(rng: RandomNumberGenerator, act: int) -> String:
+	if act >= ACT_2:
+		var act_two_elites: Array[String] = ["ember_warden", "cinder_colossus"]
+		return act_two_elites[rng.randi_range(0, act_two_elites.size() - 1)]
+
+	return "ember_warden"
+
+
+static func _pick_floor_two_left_room(rng: RandomNumberGenerator, act: int) -> String:
 	var options: Array[String] = [
 		TowerRoomDatabaseScript.ROOM_REST,
 		TowerRoomDatabaseScript.ROOM_SHRINE,
 		TowerRoomDatabaseScript.ROOM_EVENT,
+		TowerRoomDatabaseScript.ROOM_ELITE,
 	]
+
+	if act >= ACT_2:
+		options.append(TowerRoomDatabaseScript.ROOM_FORGE)
+
 	return options[rng.randi_range(0, options.size() - 1)]
 
 
-static func _pick_floor_two_right_room(rng: RandomNumberGenerator) -> String:
+static func _pick_floor_two_right_room(rng: RandomNumberGenerator, act: int) -> String:
 	var options: Array[String] = [
 		TowerRoomDatabaseScript.ROOM_MARKET,
 		TowerRoomDatabaseScript.ROOM_OBSERVATORY,
 		TowerRoomDatabaseScript.ROOM_EVENT,
+		TowerRoomDatabaseScript.ROOM_ELITE,
 	]
+
+	if act >= ACT_2:
+		options.append(TowerRoomDatabaseScript.ROOM_SHRINE)
+
 	return options[rng.randi_range(0, options.size() - 1)]
 
 

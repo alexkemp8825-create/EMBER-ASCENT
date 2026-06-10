@@ -109,7 +109,8 @@ func _get_enemy_ids_for_current_encounter() -> Array[String]:
 	var enemy_ids: Array[String] = []
 
 	match encounter_id:
-		"charred_rat", "furnace_cultist", "molten_guard", "bellows_saint":
+		"charred_rat", "furnace_cultist", "molten_guard", "bellows_saint",
+		"ember_warden", "cinder_colossus", "furnace_hound", "ash_zealot", "ember_regent":
 			enemy_ids.append(encounter_id)
 		_:
 			enemy_ids.append("charred_rat")

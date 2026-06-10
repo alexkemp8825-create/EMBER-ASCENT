@@ -47,7 +47,11 @@ func _build_reward_ui() -> void:
 
 	_build_card_choices()
 	skip_button.visible = true
-	subtitle_label.text = "Choose a card to add to your deck, or skip."
+
+	if bool(_payload.get("is_elite", false)):
+		subtitle_label.text = "Elite defeated. Choose a card from enhanced rewards, or skip."
+	else:
+		subtitle_label.text = "Choose a card to add to your deck, or skip."
 
 
 func _build_card_choices() -> void:

@@ -3,6 +3,7 @@ class_name TowerRoomDatabase
 
 const ROOM_ENTRANCE := "entrance"
 const ROOM_BATTLE := "battle"
+const ROOM_ELITE := "elite"
 const ROOM_FORGE := "forge"
 const ROOM_OBSERVATORY := "observatory"
 const ROOM_MARKET := "market"
@@ -14,6 +15,7 @@ const ROOM_BOSS := "boss"
 const ROOM_TYPES: Array[String] = [
 	ROOM_ENTRANCE,
 	ROOM_BATTLE,
+	ROOM_ELITE,
 	ROOM_FORGE,
 	ROOM_OBSERVATORY,
 	ROOM_MARKET,
@@ -26,6 +28,7 @@ const ROOM_TYPES: Array[String] = [
 const DEFAULT_DISPLAY_NAMES := {
 	ROOM_ENTRANCE: "Entrance",
 	ROOM_BATTLE: "Battle",
+	ROOM_ELITE: "Elite Battle",
 	ROOM_FORGE: "Forge",
 	ROOM_OBSERVATORY: "Observatory",
 	ROOM_MARKET: "Market",

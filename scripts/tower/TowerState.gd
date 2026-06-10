@@ -5,6 +5,7 @@ const TowerRoomDataScript := preload("res://scripts/tower/TowerRoomData.gd")
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
 const EventDatabaseScript := preload("res://scripts/events/EventDatabase.gd")
+const EnemyDatabaseScript := preload("res://scripts/enemies/EnemyDatabase.gd")
 
 const ROOM_VERTICAL_SPACING := 160.0
 const HORIZONTAL_LANE_SPACING := 180.0
@@ -14,15 +15,22 @@ var connections: Array = []
 var current_room_id: String = ""
 var highest_floor: int = 0
 var tower_seed: int = 0
+var act: int = 1
 
 
-func create_new_tower(seed_value: int = -1) -> void:
+func create_new_tower(seed_value: int = -1, tower_act: int = 1) -> void:
 	if seed_value < 0:
 		tower_seed = int(Time.get_unix_time_from_system())
 	else:
 		tower_seed = seed_value
 
-	TowerGeneratorScript.generate_act_one(self, tower_seed)
+	act = max(tower_act, 1)
+
+	match act:
+		2:
+			TowerGeneratorScript.generate_act_two(self, tower_seed)
+		_:
+			TowerGeneratorScript.generate_act_one(self, tower_seed)
 
 
 func add_room(room_type: String, source_card_id: String, floor: int) -> TowerRoomData:
@@ -37,7 +45,7 @@ func add_room_at(
 ) -> TowerRoomData:
 	var room_id := _generate_room_id(room_type)
 	var room := _create_room(room_id, room_type, source_card_id, floor, lane)
-	_apply_event_room_metadata(room)
+	_apply_room_metadata(room)
 	rooms.append(room)
 	highest_floor = max(highest_floor, floor)
 	return room
@@ -119,6 +127,7 @@ func serialize() -> Dictionary:
 		"current_room_id": current_room_id,
 		"highest_floor": highest_floor,
 		"tower_seed": tower_seed,
+		"act": act,
 	}
 
 
@@ -140,6 +149,7 @@ func deserialize(data: Dictionary) -> void:
 	current_room_id = str(data.get("current_room_id", ""))
 	highest_floor = int(data.get("highest_floor", 0))
 	tower_seed = int(data.get("tower_seed", 0))
+	act = int(data.get("act", 1))
 
 
 func _create_room(
@@ -164,17 +174,22 @@ func _create_room(
 	)
 
 
-func _apply_event_room_metadata(room: TowerRoomData) -> void:
-	if room.room_type != TowerRoomDatabaseScript.ROOM_EVENT:
-		return
-
+func _apply_room_metadata(room: TowerRoomData) -> void:
 	if room.source_card_id == "":
 		return
 
-	var event_database := EventDatabaseScript.new()
-	var event_data := event_database.get_event(room.source_card_id)
-	if event_data != null:
-		room.display_name = event_data.title
+	if room.room_type == TowerRoomDatabaseScript.ROOM_EVENT:
+		var event_database := EventDatabaseScript.new()
+		var event_data := event_database.get_event(room.source_card_id)
+		if event_data != null:
+			room.display_name = event_data.title
+		return
+
+	if room.room_type == TowerRoomDatabaseScript.ROOM_ELITE:
+		var enemy_database := EnemyDatabaseScript.new()
+		var enemy_data := enemy_database.get_enemy(room.source_card_id)
+		if enemy_data != null:
+			room.display_name = "Elite: %s" % enemy_data.display_name
 
 
 func _generate_room_id(room_type: String) -> String:

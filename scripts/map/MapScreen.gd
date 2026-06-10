@@ -2,6 +2,7 @@ extends PanelContainer
 
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
+const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
@@ -29,8 +30,8 @@ func _refresh_map() -> void:
 	if tower_map_canvas.has_method("refresh"):
 		tower_map_canvas.refresh(tower_state)
 
-	if tower_state.is_boss_defeated():
-		status_label.text = "Act %d complete! Further ascents are coming soon." % RunState.current_act
+	if tower_state.is_boss_defeated() and RunState.current_act >= RewardManagerScript.FINAL_ACT:
+		status_label.text = "Run complete! The tower falls silent."
 		return
 
 	var available_rooms := tower_state.get_available_rooms()
@@ -46,8 +47,12 @@ func _on_room_pressed(room: TowerRoomData) -> void:
 	match room.room_type:
 		TowerRoomDatabaseScript.ROOM_BATTLE:
 			SceneLoader.change_to_combat(_get_battle_encounter_id(room.floor))
+		TowerRoomDatabaseScript.ROOM_ELITE:
+			SceneLoader.change_to_combat(_get_elite_encounter_id(room))
 		TowerRoomDatabaseScript.ROOM_BOSS:
-			SceneLoader.change_to_combat("bellows_saint")
+			SceneLoader.change_to_combat(
+				RewardManagerScript.get_boss_encounter_for_act(RunState.current_act)
+			)
 		TowerRoomDatabaseScript.ROOM_REST:
 			SceneLoader.change_to_rest()
 		TowerRoomDatabaseScript.ROOM_MARKET:
@@ -64,7 +69,26 @@ func _on_room_pressed(room: TowerRoomData) -> void:
 			push_warning("Unhandled room type: %s" % room.room_type)
 
 
+func _get_elite_encounter_id(room: TowerRoomData) -> String:
+	if room.source_card_id != "":
+		return room.source_card_id
+
+	if RunState.current_act >= 2:
+		return "cinder_colossus"
+
+	return "ember_warden"
+
+
 func _get_battle_encounter_id(floor: int) -> String:
+	if RunState.current_act >= 2:
+		if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
+			return "ash_zealot"
+
+		if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
+			return "furnace_hound"
+
+		return "molten_guard"
+
 	if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
 		return "molten_guard"
 
