@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/RewardScreen.gd" id="1_reward_screen"]
+
+[node name="RewardScreen" type="PanelContainer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_reward_screen")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="Title" type="Label" parent="MarginContainer/Content"]
+layout_mode = 2
+text = "Victory"
+horizontal_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "+0 Gold"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Choose your reward."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CardChoicesContainer" type="HBoxContainer" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="RelicChoicesContainer" type="VBoxContainer" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="MarginContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SkipButton" type="Button" parent="MarginContainer/Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Skip Card"
+
+[node name="ContinueButton" type="Button" parent="MarginContainer/Content/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Continue"

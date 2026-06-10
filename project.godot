@@ -1,0 +1,30 @@
+; Engine configuration file.
+; EMBER ASCENT - Godot 4.x project
+
+config_version=5
+
+[application]
+
+config/name="EMBER ASCENT"
+run/main_scene="res://scenes/main/Main.tscn"
+config/features=PackedStringArray("4.0")
+
+[autoload]
+
+GameState="*res://scripts/core/GameState.gd"
+RunState="*res://scripts/core/RunState.gd"
+SaveManager="*res://scripts/core/SaveManager.gd"
+LegacyManager="*res://scripts/legacy/LegacyManager.gd"
+SceneLoader="*res://scripts/core/SceneLoader.gd"
+RNG="*res://scripts/core/RNG.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
