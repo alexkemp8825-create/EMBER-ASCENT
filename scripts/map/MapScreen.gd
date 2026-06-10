@@ -2,6 +2,7 @@ extends PanelContainer
 
 const MapNavigatorScript := preload("res://scripts/map/MapNavigator.gd")
 
+@onready var subtitle_label: Label = %SubtitleLabel
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
 @onready var version_label: Label = %VersionLabel
@@ -36,6 +37,7 @@ func _refresh_map() -> void:
 
 	var tower_state := RunState.get_tower_state()
 	var current_room := tower_state.get_room(tower_state.current_room_id)
+	subtitle_label.text = TowerMemoryManager.get_map_subtitle()
 	stats_label.text = "HP: %d/%d  |  Gold: %d  |  Act %d Floor %d" % [
 		RunState.current_hp,
 		RunState.max_hp,

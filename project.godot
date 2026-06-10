@@ -17,6 +17,7 @@ RunState="*res://scripts/core/RunState.gd"
 SaveManager="*res://scripts/core/SaveManager.gd"
 SceneLoader="*res://scripts/core/SceneLoader.gd"
 RNG="*res://scripts/core/RNG.gd"
+TowerMemoryManager="*res://scripts/core/TowerMemoryManager.gd"
 
 [display]
 

@@ -50,6 +50,8 @@ var _card_database := CardDatabase.new()
 var _enemy_database := EnemyDatabase.new()
 var _selected_enemy_index: int = 0
 var _temporary_strength: int = 0
+var _death_recorded := false
+var _recorded_defeated_enemies: Array[String] = []
 
 
 func _ready() -> void:
@@ -107,6 +109,10 @@ func _create_enemy_encounter() -> Array[EnemyInstance]:
 	for enemy_id in enemy_ids:
 		var enemy := _enemy_database.create_enemy(enemy_id)
 		if enemy != null:
+			enemy.display_name = TowerMemoryManager.get_remembered_enemy_name(
+				enemy.enemy_id,
+				enemy.display_name
+			)
 			enemies.append(enemy)
 
 	return enemies
@@ -289,6 +295,9 @@ func _play_card(card_instance: CardInstance) -> void:
 
 	energy -= card_data.cost
 	_log("Played %s." % card_data.display_name)
+	var tactic_line := TowerMemoryManager.record_card_played(card_instance.card_id)
+	if tactic_line != "":
+		_log(tactic_line)
 	_resolve_card_effects(card_data, target_index)
 	_move_card_from_hand_to_discard(card_instance)
 
@@ -344,6 +353,7 @@ func _apply_damage_effect(target_index: int, amount: int) -> void:
 
 	if not enemy.is_alive():
 		_log("%s is defeated." % enemy.display_name)
+		_record_enemy_defeat(enemy)
 		_selected_enemy_index = _get_first_living_enemy_index()
 
 
@@ -416,6 +426,7 @@ func _resolve_enemy_burn_ticks() -> void:
 
 		if not enemy.is_alive():
 			_log("%s is defeated." % enemy.display_name)
+			_record_enemy_defeat(enemy)
 
 	_selected_enemy_index = _get_first_living_enemy_index()
 
@@ -500,6 +511,9 @@ func _handle_victory() -> void:
 
 
 func _handle_defeat() -> void:
+	if not _death_recorded:
+		_death_recorded = true
+		TowerMemoryManager.record_death()
 	_log("Defeat.")
 	end_turn_button.disabled = true
 	defeat_message_label.text = "Your embers fade in the tower's silence."
@@ -510,6 +524,14 @@ func _on_defeat_continue_pressed() -> void:
 	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
+
+
+func _record_enemy_defeat(enemy: EnemyInstance) -> void:
+	if enemy.enemy_id == "" or _recorded_defeated_enemies.has(enemy.enemy_id):
+		return
+
+	_recorded_defeated_enemies.append(enemy.enemy_id)
+	TowerMemoryManager.record_enemy_defeated(enemy.enemy_id)
 
 
 func _get_player_display_name() -> String:

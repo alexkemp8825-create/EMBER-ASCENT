@@ -60,6 +60,7 @@ func _start_run(class_id: String) -> void:
 		return
 
 	RunState.reset_run()
+	TowerMemoryManager.record_run_started()
 	RunState.selected_class = class_id
 	RunState.max_hp = int(class_definition.get("max_hp", 0))
 	RunState.current_hp = RunState.max_hp
