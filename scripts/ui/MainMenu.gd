@@ -11,7 +11,11 @@ extends PanelContainer
 func _ready() -> void:
 	var build_text := "Build %s" % GameState.VERSION
 	version_label.text = build_text
-	subtitle_label.text = "Climb the living volcanic tower.\n%s" % build_text
+	var subtitle := "Climb the living volcanic tower.\n%s" % build_text
+	var memory_line := TowerMemoryManager.get_fallen_climbs_line()
+	if memory_line != "":
+		subtitle += "\n%s" % memory_line
+	subtitle_label.text = subtitle
 	status_label.text = _get_launch_hint()
 	new_run_button.pressed.connect(_on_new_run_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)

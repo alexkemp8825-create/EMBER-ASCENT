@@ -50,21 +50,28 @@ var _card_database := CardDatabase.new()
 var _enemy_database := EnemyDatabase.new()
 var _selected_enemy_index: int = 0
 var _temporary_strength: int = 0
+var _death_recorded := false
+var _recorded_defeated_enemies: Array[String] = []
+var _payload_received := false
 
 
 func _ready() -> void:
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
 	defeat_continue_button.pressed.connect(_on_defeat_continue_pressed)
 	defeat_panel.visible = false
-	call_deferred("_start_combat")
 
 
 func set_payload(payload: Dictionary) -> void:
-	encounter_id = payload.get("encounter_id", encounter_id)
+	encounter_id = str(payload.get("encounter_id", encounter_id))
+	if encounter_id == "":
+		encounter_id = "charred_rat"
+	_payload_received = true
+	if is_node_ready():
+		_start_combat()
 
 
 func _start_combat() -> void:
-	if _combat_started:
+	if _combat_started or not _payload_received:
 		return
 
 	_combat_started = true
@@ -80,6 +87,22 @@ func _start_combat() -> void:
 	discard_pile.clear()
 	exhaust_pile.clear()
 	_enemies = _create_enemy_encounter()
+
+	if _enemies.is_empty():
+		push_error("Combat started with no enemies for encounter_id: %s" % encounter_id)
+		var fallback := _enemy_database.create_enemy("charred_rat")
+		if fallback != null:
+			fallback.display_name = TowerMemoryManager.get_remembered_enemy_name(
+				fallback.enemy_id,
+				fallback.display_name
+			)
+			_enemies.append(fallback)
+		else:
+			push_error("Fallback charred_rat enemy failed to spawn.")
+			_handle_combat_setup_failure()
+			return
+
+	print("Starting combat encounter_id=", encounter_id, " enemies=", _enemies.size())
 	_selected_enemy_index = _get_first_living_enemy_index()
 
 	_log("Combat begins.")
@@ -105,9 +128,22 @@ func _create_enemy_encounter() -> Array[EnemyInstance]:
 	var enemies: Array[EnemyInstance] = []
 
 	for enemy_id in enemy_ids:
+		print("Requesting enemy_id=", enemy_id)
 		var enemy := _enemy_database.create_enemy(enemy_id)
-		if enemy != null:
-			enemies.append(enemy)
+		if enemy == null:
+			push_error("EnemyDatabase.create_enemy returned null for: %s" % enemy_id)
+			continue
+
+		enemy.display_name = TowerMemoryManager.get_remembered_enemy_name(
+			enemy.enemy_id,
+			enemy.display_name
+		)
+		enemies.append(enemy)
+
+	if enemies.is_empty():
+		push_error(
+			"No enemies spawned for encounter_id: %s (requested: %s)" % [encounter_id, enemy_ids]
+		)
 
 	return enemies
 
@@ -289,6 +325,9 @@ func _play_card(card_instance: CardInstance) -> void:
 
 	energy -= card_data.cost
 	_log("Played %s." % card_data.display_name)
+	var tactic_line := TowerMemoryManager.record_card_played(card_instance.card_id)
+	if tactic_line != "":
+		_log(tactic_line)
 	_resolve_card_effects(card_data, target_index)
 	_move_card_from_hand_to_discard(card_instance)
 
@@ -344,6 +383,7 @@ func _apply_damage_effect(target_index: int, amount: int) -> void:
 
 	if not enemy.is_alive():
 		_log("%s is defeated." % enemy.display_name)
+		_record_enemy_defeat(enemy)
 		_selected_enemy_index = _get_first_living_enemy_index()
 
 
@@ -416,6 +456,7 @@ func _resolve_enemy_burn_ticks() -> void:
 
 		if not enemy.is_alive():
 			_log("%s is defeated." % enemy.display_name)
+			_record_enemy_defeat(enemy)
 
 	_selected_enemy_index = _get_first_living_enemy_index()
 
@@ -485,11 +526,21 @@ func _is_defeated() -> bool:
 
 
 func _are_all_enemies_defeated() -> bool:
+	if _enemies.is_empty():
+		return false
+
 	for enemy in _enemies:
 		if enemy.is_alive():
 			return false
 
 	return true
+
+
+func _handle_combat_setup_failure() -> void:
+	end_turn_button.disabled = true
+	defeat_message_label.text = "No enemies found for this encounter."
+	defeat_panel.visible = true
+	_log("Combat could not start.")
 
 
 func _handle_victory() -> void:
@@ -500,6 +551,9 @@ func _handle_victory() -> void:
 
 
 func _handle_defeat() -> void:
+	if not _death_recorded:
+		_death_recorded = true
+		TowerMemoryManager.record_death()
 	_log("Defeat.")
 	end_turn_button.disabled = true
 	defeat_message_label.text = "Your embers fade in the tower's silence."
@@ -510,6 +564,14 @@ func _on_defeat_continue_pressed() -> void:
 	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
+
+
+func _record_enemy_defeat(enemy: EnemyInstance) -> void:
+	if enemy.enemy_id == "" or _recorded_defeated_enemies.has(enemy.enemy_id):
+		return
+
+	_recorded_defeated_enemies.append(enemy.enemy_id)
+	TowerMemoryManager.record_enemy_defeated(enemy.enemy_id)
 
 
 func _get_player_display_name() -> String:

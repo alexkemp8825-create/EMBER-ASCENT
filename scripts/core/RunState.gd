@@ -145,14 +145,18 @@ func complete_active_room() -> bool:
 	if active_room_id == "":
 		return false
 
+	var room := get_tower_state().get_room(active_room_id)
 	var completed := get_tower_state().mark_room_completed(active_room_id)
 	if completed:
 		current_node_id = get_tower_state().current_room_id
-		current_floor = get_tower_state().get_room(active_room_id).floor
+		if room != null:
+			current_floor = room.floor
 
 	active_room_id = ""
 
 	if completed:
+		if room != null:
+			TowerMemoryManager.record_room_completed(room.room_type)
 		_persist_run_progress()
 
 	return completed
