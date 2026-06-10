@@ -60,6 +60,7 @@ func _on_choice_pressed(event_data: EventData, choice_id: String) -> void:
 	continue_button.disabled = false
 
 	if RunState.current_hp <= 0:
+		TowerMemoryManager.record_death()
 		SaveManager.delete_save()
 		RunState.reset_run()
 		SceneLoader.change_to_main_menu()
