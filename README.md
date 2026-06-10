@@ -11,21 +11,22 @@ A roguelike deckbuilder built in Godot 4.x. Climb the Living Tower, fight enemie
 1. Clone or pull the latest `main` branch.
 2. Open Godot 4.x and click **Import**.
 3. Select the `project.godot` file in the project root.
-4. Press **F5** (or click the Play button) to launch the game.
+4. Press **F5** (Run Project) — **not F6** (Run Current Scene).
 
 The main scene is `scenes/main/Main.tscn`.
 
-**Verify you have the latest build:** the main menu should show `Build 0.1.1-map-fix` at the bottom. If you still see "Map placeholder", you are running an old copy — delete the `.godot` cache folder and re-import the project.
+**Verify you have the latest build:** the main menu should show `Build 0.1.2-launch-fix` and the window title should say `EMBER ASCENT 0.1.2-launch-fix`. If you only see three buttons with no build text, you are on an old copy — pull latest `main`, delete the `.godot` folder, and re-import.
 
 ## How to Play (Test Build)
 
 1. **Main Menu** — Start a **New Run** or **Continue Run** (save works between rooms on the map).
 2. **Class Select** — Pick **Ash Knight** (strength/block) or **Cinder Witch** (burn). Four other classes are placeholders.
-3. **Tower Map (The Ember Spire)** — Click an **Enter: ...** button below the map, or click a room node on the map itself.
-4. **Combat** — Play cards using energy, gain block, target enemies, then press **End Turn**.
-5. **Rewards** — After combat, take gold, a card, or (after bosses) a relic.
-6. **Act 2** — Defeat the Act 1 boss to advance; you heal 30% of max HP and climb a new tower.
-7. **Victory** — Defeat the Act 2 boss (`ember_regent`) to complete the run. Use **New Run** or **Main Menu** on the victory screen.
+3. **First battle** — After class select, you go straight into your first fight (no map screen yet).
+4. **Tower Map (The Ember Spire)** — After combat, use the big **Continue** button or click a room on the map.
+5. **Combat** — Play cards using energy, gain block, target enemies, then press **End Turn**.
+6. **Rewards** — After combat, take gold, a card, or (after bosses) a relic.
+7. **Act 2** — Defeat the Act 1 boss to advance; you heal 30% of max HP and climb a new tower.
+8. **Victory** — Defeat the Act 2 boss (`ember_regent`) to complete the run. Use **New Run** or **Main Menu** on the victory screen.
 
 Use **Abandon Run** on the map to return to the main menu at any time.
 

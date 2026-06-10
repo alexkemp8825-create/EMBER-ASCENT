@@ -1,13 +1,18 @@
 extends PanelContainer
 
+@onready var subtitle_label: Label = %Subtitle
 @onready var new_run_button: Button = %NewRunButton
 @onready var continue_button: Button = %ContinueRunButton
 @onready var quit_button: Button = %QuitButton
 @onready var version_label: Label = %VersionLabel
+@onready var status_label: Label = %StatusLabel
 
 
 func _ready() -> void:
-	version_label.text = "Build %s" % GameState.VERSION
+	var build_text := "Build %s" % GameState.VERSION
+	version_label.text = build_text
+	subtitle_label.text = "Climb the living volcanic tower.\n%s" % build_text
+	status_label.text = _get_launch_hint()
 	new_run_button.pressed.connect(_on_new_run_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
@@ -25,9 +30,17 @@ func _refresh_continue_button() -> void:
 
 
 func _on_new_run_pressed() -> void:
+	status_label.text = "Starting new run..."
 	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_class_select()
+
+
+func _get_launch_hint() -> String:
+	if get_tree().current_scene != null and get_tree().current_scene.has_method("change_screen"):
+		return "Press New Run to begin."
+
+	return "Tip: press F5 (Run Project), not F6 (Run Current Scene)."
 
 
 func _on_continue_pressed() -> void:

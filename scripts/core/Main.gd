@@ -32,6 +32,7 @@ var current_screen: Node
 
 
 func _ready() -> void:
+	get_window().title = "EMBER ASCENT %s" % GameState.VERSION
 	change_screen(MAIN_MENU)
 
 

@@ -29,9 +29,11 @@ text = "EMBER ASCENT"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Climb the living volcanic tower."
 horizontal_alignment = 1
+autowrap_mode = 2
 
 [node name="ButtonSpacer" type="Control" parent="MarginContainer/Content"]
 custom_minimum_size = Vector2(0, 32)
@@ -64,3 +66,10 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Build"
 horizontal_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Press New Run to begin."
+horizontal_alignment = 1
+autowrap_mode = 2
