@@ -42,6 +42,7 @@ func _create_room_views() -> void:
 		room_view.position = _room_screen_position(room) - (ROOM_NODE_SIZE * 0.5)
 		room_view.custom_minimum_size = ROOM_NODE_SIZE
 		room_view.size = ROOM_NODE_SIZE
+		room_view.mouse_filter = Control.MOUSE_FILTER_STOP
 		room_view.set_room(
 			room,
 			room.room_id == _tower_state.current_room_id,

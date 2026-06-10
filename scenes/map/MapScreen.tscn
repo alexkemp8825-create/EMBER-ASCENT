@@ -25,7 +25,7 @@ theme_override_constants/separation = 16
 
 [node name="Title" type="Label" parent="MarginContainer/Content"]
 layout_mode = 2
-text = "The Living Tower"
+text = "The Ember Spire"
 horizontal_alignment = 1
 
 [node name="StatsLabel" type="Label" parent="MarginContainer/Content"]
@@ -35,6 +35,7 @@ text = "HP: 0/0  |  Gold: 0  |  Floor: 0"
 horizontal_alignment = 1
 
 [node name="TowerMapScroll" type="ScrollContainer" parent="MarginContainer/Content"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
@@ -49,8 +50,24 @@ script = ExtResource("2_tower_map_canvas")
 [node name="StatusLabel" type="Label" parent="MarginContainer/Content"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Choose your next room."
+text = "Choose your next room using the buttons below or the map."
 horizontal_alignment = 1
+
+[node name="AvailableRoomsPanel" type="PanelContainer" parent="MarginContainer/Content"]
+layout_mode = 2
+
+[node name="AvailableRoomsMargin" type="MarginContainer" parent="MarginContainer/Content/AvailableRoomsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="AvailableRoomsContainer" type="VBoxContainer" parent="MarginContainer/Content/AvailableRoomsPanel/AvailableRoomsMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 1
 
 [node name="AbandonRunButton" type="Button" parent="MarginContainer/Content"]
 unique_name_in_owner = true

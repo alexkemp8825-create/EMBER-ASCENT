@@ -6,7 +6,9 @@ const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
+@onready var tower_map_scroll: ScrollContainer = %TowerMapScroll
 @onready var tower_map_canvas: Control = %TowerMapCanvas
+@onready var available_rooms_container: VBoxContainer = %AvailableRoomsContainer
 @onready var victory_panel: PanelContainer = %VictoryPanel
 @onready var victory_message_label: Label = %VictoryMessageLabel
 @onready var new_run_button: Button = %NewRunButton
@@ -26,6 +28,7 @@ func _ready() -> void:
 
 
 func _refresh_map() -> void:
+	_clear_available_room_buttons()
 	var tower_state := RunState.get_tower_state()
 	var current_room := tower_state.get_room(tower_state.current_room_id)
 	stats_label.text = "HP: %d/%d  |  Gold: %d  |  Act %d Floor %d" % [
@@ -54,8 +57,10 @@ func _refresh_map() -> void:
 	if available_rooms.is_empty():
 		status_label.text = "No paths remain from here."
 	else:
+		_populate_available_room_buttons(available_rooms)
 		if status_label.text == "" or not status_label.text.begins_with("Act "):
-			status_label.text = "Choose your next room."
+			status_label.text = "Choose your next room using the buttons below or the map."
+		call_deferred("_scroll_to_room", available_rooms[0])
 
 
 func _on_room_pressed(room: TowerRoomData) -> void:
@@ -153,3 +158,32 @@ func _on_abandon_run_pressed() -> void:
 	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
+
+
+func _clear_available_room_buttons() -> void:
+	for child in available_rooms_container.get_children():
+		child.queue_free()
+
+
+func _populate_available_room_buttons(available_rooms: Array) -> void:
+	for room in available_rooms:
+		if room is TowerRoomData:
+			var room_button := Button.new()
+			room_button.text = "Enter: %s (Floor %d)" % [room.display_name, room.floor]
+			room_button.custom_minimum_size = Vector2(480, 48)
+			room_button.pressed.connect(_on_room_pressed.bind(room))
+			available_rooms_container.add_child(room_button)
+
+
+func _scroll_to_room(room: TowerRoomData) -> void:
+	if room == null or tower_map_scroll == null or tower_map_canvas == null:
+		return
+
+	await get_tree().process_frame
+
+	var canvas_height: float = tower_map_canvas.size.y
+	var room_screen_y: float = canvas_height - 80.0 + room.position.y
+	var viewport_height: float = tower_map_scroll.size.y
+	var scroll_max: float = maxf(0.0, canvas_height - viewport_height)
+	var target_scroll: float = clampf(room_screen_y - (viewport_height * 0.45), 0.0, scroll_max)
+	tower_map_scroll.scroll_vertical = int(target_scroll)

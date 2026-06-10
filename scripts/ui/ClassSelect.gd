@@ -43,7 +43,7 @@ func _on_class_selected(class_id: String) -> void:
 		return
 
 	var class_definition := _class_database.get_class_definition(class_id)
-	status_label.text = "%s selected. Entering The Living Tower..." % class_definition.get("display_name", class_id)
+	status_label.text = "%s selected. Entering The Ember Spire..." % class_definition.get("display_name", class_id)
 	SceneLoader.change_to_map()
 
 
