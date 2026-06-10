@@ -16,6 +16,7 @@ const PLACEHOLDER_STARTER_DECK := [
 ]
 
 const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
+const ENEMY_VIEW_SCENE := preload("res://scenes/combat/EnemyView.tscn")
 
 @onready var encounter_title: Label = %EncounterTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
@@ -25,7 +26,7 @@ const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
 @onready var combat_log_label: Label = %CombatLogLabel
 @onready var end_turn_button: Button = %EndTurnButton
 
-var encounter_id: String = "phase_7_placeholder"
+var encounter_id: String = "charred_rat"
 
 var hp: int = 0
 var block: int = 0
@@ -36,11 +37,12 @@ var hand: Array[CardInstance] = []
 var discard_pile: Array[CardInstance] = []
 var exhaust_pile: Array[CardInstance] = []
 
-var _enemies: Array[Dictionary] = []
+var _enemies: Array[EnemyInstance] = []
 var _turn_number: int = 0
 var _combat_started := false
 var _combat_log: Array[String] = []
 var _card_database := CardDatabase.new()
+var _enemy_database := EnemyDatabase.new()
 var _selected_enemy_index: int = 0
 var _temporary_strength: int = 0
 
@@ -69,7 +71,8 @@ func _start_combat() -> void:
 	hand.clear()
 	discard_pile.clear()
 	exhaust_pile.clear()
-	_enemies = _create_placeholder_encounter()
+	_enemies = _create_enemy_encounter()
+	_selected_enemy_index = _get_first_living_enemy_index()
 
 	_log("Combat begins.")
 	_log("Your deck is shuffled into the draw pile.")
@@ -89,21 +92,28 @@ func _create_draw_pile() -> Array[CardInstance]:
 	return _shuffle_card_instances(instances)
 
 
-func _create_placeholder_encounter() -> Array[Dictionary]:
-	return [
-		{
-			"id": "phase_7_training_shade",
-			"display_name": "Training Shade",
-			"hp": 20,
-			"max_hp": 20,
-			"block": 0,
-			"actions": [
-				{"type": "attack", "amount": 5},
-				{"type": "block", "amount": 4},
-			],
-			"action_index": 0,
-		},
-	]
+func _create_enemy_encounter() -> Array[EnemyInstance]:
+	var enemy_ids := _get_enemy_ids_for_current_encounter()
+	var enemies: Array[EnemyInstance] = []
+
+	for enemy_id in enemy_ids:
+		var enemy := _enemy_database.create_enemy(enemy_id)
+		if enemy != null:
+			enemies.append(enemy)
+
+	return enemies
+
+
+func _get_enemy_ids_for_current_encounter() -> Array[String]:
+	var enemy_ids: Array[String] = []
+
+	match encounter_id:
+		"charred_rat", "furnace_cultist", "molten_guard", "bellows_saint":
+			enemy_ids.append(encounter_id)
+		_:
+			enemy_ids.append("charred_rat")
+
+	return enemy_ids
 
 
 func _start_player_turn() -> void:
@@ -164,7 +174,7 @@ func _discard_hand() -> void:
 
 func _resolve_enemy_turn() -> void:
 	for enemy in _enemies:
-		if enemy.get("hp", 0) <= 0:
+		if not enemy.is_alive():
 			continue
 
 		var action := _get_enemy_action(enemy)
@@ -173,20 +183,36 @@ func _resolve_enemy_turn() -> void:
 				_resolve_enemy_attack(enemy, int(action.get("amount", 0)))
 			"block":
 				var block_amount := int(action.get("amount", 0))
-				enemy["block"] = int(enemy.get("block", 0)) + block_amount
-				_log("%s gains %d block." % [enemy.get("display_name", "Enemy"), block_amount])
+				enemy.gain_block(block_amount)
+				_log("%s gains %d block." % [enemy.display_name, block_amount])
+			"buff_strength":
+				var strength_amount := int(action.get("amount", 0))
+				enemy.gain_strength(strength_amount)
+				_log("%s gains %d Strength." % [enemy.display_name, strength_amount])
+			"add_burn":
+				var burn_amount := int(action.get("amount", 1))
+				_add_status_to_discard("burn", burn_amount)
+				_log("%s scatters Burn into your discard pile." % enemy.display_name)
+			"attack_block":
+				_resolve_enemy_attack(enemy, int(action.get("attack_amount", 0)))
+				var followup_block_amount := int(action.get("block_amount", 0))
+				enemy.gain_block(followup_block_amount)
+				_log("%s gains %d block." % [enemy.display_name, followup_block_amount])
+			"big_attack_warning":
+				_log("%s draws in a thunderous breath." % enemy.display_name)
 			_:
-				_log("%s hesitates." % enemy.get("display_name", "Enemy"))
+				_log("%s hesitates." % enemy.display_name)
 
 
-func _resolve_enemy_attack(enemy: Dictionary, amount: int) -> void:
-	var blocked_damage: int = min(block, amount)
-	var damage: int = amount - blocked_damage
+func _resolve_enemy_attack(enemy: EnemyInstance, amount: int) -> void:
+	var total_amount := amount + enemy.strength
+	var blocked_damage: int = min(block, total_amount)
+	var damage: int = total_amount - blocked_damage
 	block -= blocked_damage
 	hp -= damage
 	_log("%s attacks for %d. Block absorbs %d. You take %d damage." % [
-		enemy.get("display_name", "Enemy"),
-		amount,
+		enemy.display_name,
+		total_amount,
 		blocked_damage,
 		damage,
 	])
@@ -194,19 +220,12 @@ func _resolve_enemy_attack(enemy: Dictionary, amount: int) -> void:
 
 func _choose_next_enemy_intents() -> void:
 	for enemy in _enemies:
-		var action_count: int = enemy.get("actions", []).size()
-		if action_count <= 0:
-			continue
-
-		enemy["action_index"] = (int(enemy.get("action_index", 0)) + 1) % action_count
+		if enemy.is_alive():
+			enemy.advance_action()
 
 
-func _get_enemy_action(enemy: Dictionary) -> Dictionary:
-	var actions: Array = enemy.get("actions", [])
-	if actions.is_empty():
-		return {}
-
-	return actions[int(enemy.get("action_index", 0))]
+func _get_enemy_action(enemy: EnemyInstance) -> Dictionary:
+	return enemy.get_current_action()
 
 
 func _shuffle_card_instances(cards: Array[CardInstance]) -> Array[CardInstance]:
@@ -281,24 +300,22 @@ func _apply_damage_effect(target_index: int, amount: int) -> void:
 		return
 
 	var enemy := _enemies[target_index]
-	if int(enemy.get("hp", 0)) <= 0:
-		_log("%s is already defeated." % enemy.get("display_name", "Enemy"))
+	if not enemy.is_alive():
+		_log("%s is already defeated." % enemy.display_name)
 		return
 
 	var total_damage := amount + strength
-	var enemy_block := int(enemy.get("block", 0))
+	var enemy_block := enemy.block
 	var blocked_damage: int = min(enemy_block, total_damage)
-	var damage: int = total_damage - blocked_damage
-	enemy["block"] = enemy_block - blocked_damage
-	enemy["hp"] = max(0, int(enemy.get("hp", 0)) - damage)
+	var damage := enemy.take_damage(total_damage)
 	_log("%s takes %d damage. Block absorbs %d." % [
-		enemy.get("display_name", "Enemy"),
+		enemy.display_name,
 		damage,
 		blocked_damage,
 	])
 
-	if int(enemy.get("hp", 0)) <= 0:
-		_log("%s is defeated." % enemy.get("display_name", "Enemy"))
+	if not enemy.is_alive():
+		_log("%s is defeated." % enemy.display_name)
 		_selected_enemy_index = _get_first_living_enemy_index()
 
 
@@ -369,7 +386,7 @@ func _get_first_living_enemy_index() -> int:
 
 
 func _is_living_enemy_index(index: int) -> bool:
-	return index >= 0 and index < _enemies.size() and int(_enemies[index].get("hp", 0)) > 0
+	return index >= 0 and index < _enemies.size() and _enemies[index].is_alive()
 
 
 func _on_enemy_target_pressed(enemy_index: int) -> void:
@@ -378,7 +395,7 @@ func _on_enemy_target_pressed(enemy_index: int) -> void:
 		return
 
 	_selected_enemy_index = enemy_index
-	_log("Targeting %s." % _enemies[enemy_index].get("display_name", "Enemy"))
+	_log("Targeting %s." % _enemies[enemy_index].display_name)
 	_refresh_enemies()
 
 
@@ -388,7 +405,7 @@ func _is_defeated() -> bool:
 
 func _are_all_enemies_defeated() -> bool:
 	for enemy in _enemies:
-		if enemy.get("hp", 0) > 0:
+		if enemy.is_alive():
 			return false
 
 	return true
@@ -435,28 +452,18 @@ func _refresh_enemies() -> void:
 
 	for enemy_index in range(_enemies.size()):
 		var enemy := _enemies[enemy_index]
-		var action := _get_enemy_action(enemy)
-		var enemy_box := VBoxContainer.new()
-		enemy_box.add_theme_constant_override("separation", 6)
+		var enemy_view := ENEMY_VIEW_SCENE.instantiate()
+		enemies_container.add_child(enemy_view)
+		enemy_view.set_enemy(enemy, enemy_index == _selected_enemy_index)
+		enemy_view.target_pressed.connect(_on_enemy_view_target_pressed)
 
-		var enemy_label := Label.new()
-		enemy_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		enemy_label.text = "%s%s\nHP: %d/%d  Block: %d\nIntent: %s" % [
-			"> " if enemy_index == _selected_enemy_index else "",
-			enemy.get("display_name", "Enemy"),
-			enemy.get("hp", 0),
-			enemy.get("max_hp", 0),
-			enemy.get("block", 0),
-			_format_intent(action),
-		]
-		enemy_box.add_child(enemy_label)
 
-		var target_button := Button.new()
-		target_button.text = "Target"
-		target_button.disabled = int(enemy.get("hp", 0)) <= 0
-		target_button.pressed.connect(_on_enemy_target_pressed.bind(enemy_index))
-		enemy_box.add_child(target_button)
-		enemies_container.add_child(enemy_box)
+func _on_enemy_view_target_pressed(enemy: EnemyInstance) -> void:
+	var enemy_index := _enemies.find(enemy)
+	if enemy_index == -1:
+		return
+
+	_on_enemy_target_pressed(enemy_index)
 
 
 func _refresh_hand() -> void:
@@ -472,16 +479,6 @@ func _refresh_hand() -> void:
 
 func _refresh_log() -> void:
 	combat_log_label.text = _format_combat_log()
-
-
-func _format_intent(action: Dictionary) -> String:
-	match action.get("type", ""):
-		"attack":
-			return "Attack %d" % action.get("amount", 0)
-		"block":
-			return "Defend %d" % action.get("amount", 0)
-		_:
-			return "Unknown"
 
 
 func _format_combat_log() -> String:
