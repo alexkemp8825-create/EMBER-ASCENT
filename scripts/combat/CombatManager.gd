@@ -40,6 +40,9 @@ var _enemies: Array[Dictionary] = []
 var _turn_number: int = 0
 var _combat_started := false
 var _combat_log: Array[String] = []
+var _card_database := CardDatabase.new()
+var _selected_enemy_index: int = 0
+var _temporary_strength: int = 0
 
 
 func _ready() -> void:
@@ -61,6 +64,7 @@ func _start_combat() -> void:
 	block = 0
 	energy = STARTING_ENERGY
 	strength = 0
+	_temporary_strength = 0
 	draw_pile = _create_draw_pile()
 	hand.clear()
 	discard_pile.clear()
@@ -133,7 +137,14 @@ func _refill_draw_pile_from_discard() -> void:
 
 func _on_end_turn_pressed() -> void:
 	_log("Player ends the turn.")
+	_resolve_burn_cards_at_end_of_turn()
 	_discard_hand()
+	_clear_temporary_strength()
+
+	if _is_defeated():
+		_handle_defeat()
+		return
+
 	_resolve_enemy_turn()
 
 	if _is_defeated():
@@ -209,7 +220,166 @@ func _shuffle_card_instances(cards: Array[CardInstance]) -> Array[CardInstance]:
 
 
 func _on_card_play_requested(card_instance: CardInstance) -> void:
-	_log("Selected %s. Card effects arrive in Phase 8." % card_instance.card_id)
+	_play_card(card_instance)
+
+
+func _play_card(card_instance: CardInstance) -> void:
+	if not hand.has(card_instance):
+		_log("That card is no longer in your hand.")
+		return
+
+	var card_data := _card_database.get_card(card_instance.card_id)
+	if card_data == null:
+		_log("Unknown card: %s." % card_instance.card_id)
+		return
+
+	if not card_data.is_playable():
+		_log("%s cannot be played." % card_data.display_name)
+		return
+
+	if energy < card_data.cost:
+		_log("Not enough energy for %s." % card_data.display_name)
+		return
+
+	var target_index := _get_selected_living_enemy_index()
+	if card_data.target_type == "Enemy" and target_index == -1:
+		_log("%s needs a living enemy target." % card_data.display_name)
+		return
+
+	energy -= card_data.cost
+	_log("Played %s." % card_data.display_name)
+	_resolve_card_effects(card_data, target_index)
+	_move_card_from_hand_to_discard(card_instance)
+
+	if _are_all_enemies_defeated():
+		_handle_victory()
+		return
+
+	_refresh_ui()
+
+
+func _resolve_card_effects(card_data: CardData, target_index: int) -> void:
+	for effect in card_data.effects:
+		match effect.get("type", ""):
+			"damage":
+				_apply_damage_effect(target_index, int(effect.get("amount", 0)))
+			"block":
+				_gain_block(int(effect.get("amount", 0)))
+			"draw":
+				_draw_cards(int(effect.get("amount", 0)))
+			"temp_strength":
+				_gain_temporary_strength(int(effect.get("amount", 0)))
+			"add_status_to_discard":
+				_add_status_to_discard(str(effect.get("card_id", "burn")), int(effect.get("amount", 1)))
+			_:
+				_log("Unhandled effect: %s." % effect.get("type", "unknown"))
+
+
+func _apply_damage_effect(target_index: int, amount: int) -> void:
+	if target_index < 0 or target_index >= _enemies.size():
+		_log("No enemy target.")
+		return
+
+	var enemy := _enemies[target_index]
+	if int(enemy.get("hp", 0)) <= 0:
+		_log("%s is already defeated." % enemy.get("display_name", "Enemy"))
+		return
+
+	var total_damage := amount + strength
+	var enemy_block := int(enemy.get("block", 0))
+	var blocked_damage: int = min(enemy_block, total_damage)
+	var damage: int = total_damage - blocked_damage
+	enemy["block"] = enemy_block - blocked_damage
+	enemy["hp"] = max(0, int(enemy.get("hp", 0)) - damage)
+	_log("%s takes %d damage. Block absorbs %d." % [
+		enemy.get("display_name", "Enemy"),
+		damage,
+		blocked_damage,
+	])
+
+	if int(enemy.get("hp", 0)) <= 0:
+		_log("%s is defeated." % enemy.get("display_name", "Enemy"))
+		_selected_enemy_index = _get_first_living_enemy_index()
+
+
+func _gain_block(amount: int) -> void:
+	block += amount
+	_log("Gained %d block." % amount)
+
+
+func _gain_temporary_strength(amount: int) -> void:
+	strength += amount
+	_temporary_strength += amount
+	_log("Gained %d Strength this turn." % amount)
+
+
+func _clear_temporary_strength() -> void:
+	if _temporary_strength <= 0:
+		return
+
+	strength -= _temporary_strength
+	_log("Temporary Strength fades.")
+	_temporary_strength = 0
+
+
+func _add_status_to_discard(card_id: String, amount: int) -> void:
+	for _index in range(amount):
+		discard_pile.append(CardInstance.new().setup(card_id, false, true))
+
+	_log("Added %d %s to discard pile." % [amount, card_id])
+
+
+func _move_card_from_hand_to_discard(card_instance: CardInstance) -> void:
+	var card_index := hand.find(card_instance)
+	if card_index == -1:
+		return
+
+	hand.remove_at(card_index)
+	discard_pile.append(card_instance)
+
+
+func _resolve_burn_cards_at_end_of_turn() -> void:
+	var remaining_hand: Array[CardInstance] = []
+
+	for card_instance in hand:
+		if card_instance.card_id == "burn":
+			hp -= 2
+			exhaust_pile.append(card_instance)
+			_log("Burn sears you for 2 damage, then exhausts.")
+		else:
+			remaining_hand.append(card_instance)
+
+	hand = remaining_hand
+
+
+func _get_selected_living_enemy_index() -> int:
+	if _is_living_enemy_index(_selected_enemy_index):
+		return _selected_enemy_index
+
+	_selected_enemy_index = _get_first_living_enemy_index()
+	return _selected_enemy_index
+
+
+func _get_first_living_enemy_index() -> int:
+	for index in range(_enemies.size()):
+		if _is_living_enemy_index(index):
+			return index
+
+	return -1
+
+
+func _is_living_enemy_index(index: int) -> bool:
+	return index >= 0 and index < _enemies.size() and int(_enemies[index].get("hp", 0)) > 0
+
+
+func _on_enemy_target_pressed(enemy_index: int) -> void:
+	if not _is_living_enemy_index(enemy_index):
+		_log("That enemy is already defeated.")
+		return
+
+	_selected_enemy_index = enemy_index
+	_log("Targeting %s." % _enemies[enemy_index].get("display_name", "Enemy"))
+	_refresh_enemies()
 
 
 func _is_defeated() -> bool:
@@ -263,18 +433,30 @@ func _refresh_enemies() -> void:
 	for child in enemies_container.get_children():
 		child.queue_free()
 
-	for enemy in _enemies:
+	for enemy_index in range(_enemies.size()):
+		var enemy := _enemies[enemy_index]
 		var action := _get_enemy_action(enemy)
+		var enemy_box := VBoxContainer.new()
+		enemy_box.add_theme_constant_override("separation", 6)
+
 		var enemy_label := Label.new()
 		enemy_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		enemy_label.text = "%s\nHP: %d/%d  Block: %d\nIntent: %s" % [
+		enemy_label.text = "%s%s\nHP: %d/%d  Block: %d\nIntent: %s" % [
+			"> " if enemy_index == _selected_enemy_index else "",
 			enemy.get("display_name", "Enemy"),
 			enemy.get("hp", 0),
 			enemy.get("max_hp", 0),
 			enemy.get("block", 0),
 			_format_intent(action),
 		]
-		enemies_container.add_child(enemy_label)
+		enemy_box.add_child(enemy_label)
+
+		var target_button := Button.new()
+		target_button.text = "Target"
+		target_button.disabled = int(enemy.get("hp", 0)) <= 0
+		target_button.pressed.connect(_on_enemy_target_pressed.bind(enemy_index))
+		enemy_box.add_child(target_button)
+		enemies_container.add_child(enemy_box)
 
 
 func _refresh_hand() -> void:
@@ -289,7 +471,7 @@ func _refresh_hand() -> void:
 
 
 func _refresh_log() -> void:
-	combat_log_label.text = "\n".join(_combat_log)
+	combat_log_label.text = _format_combat_log()
 
 
 func _format_intent(action: Dictionary) -> String:
@@ -300,6 +482,17 @@ func _format_intent(action: Dictionary) -> String:
 			return "Defend %d" % action.get("amount", 0)
 		_:
 			return "Unknown"
+
+
+func _format_combat_log() -> String:
+	var text := ""
+
+	for index in range(_combat_log.size()):
+		if index > 0:
+			text += "\n"
+		text += _combat_log[index]
+
+	return text
 
 
 func _log(message: String) -> void:
