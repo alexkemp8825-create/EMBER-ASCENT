@@ -128,10 +128,7 @@ func complete_active_room() -> bool:
 
 
 func _persist_run_progress() -> void:
-	if get_tower_state().is_boss_defeated():
-		SaveManager.delete_save()
-	else:
-		SaveManager.save_run()
+	SaveManager.save_run()
 
 
 func add_card_to_deck(card_id: String) -> void:

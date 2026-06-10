@@ -38,6 +38,26 @@ func record_run_end(result: String) -> LegacyRunData:
 	return legacy_run
 
 
+func finalize_run_end(result: String) -> LegacyRunData:
+	var legacy_run := record_run_end(result)
+	if legacy_run != null:
+		print("Legacy saved: Run %d became part of the tower." % legacy_run.run_number)
+	else:
+		push_warning("LegacyManager.finalize_run_end could not record legacy for result: %s" % result)
+
+	SaveManager.delete_save()
+	return legacy_run
+
+
+func build_run_end_payload(legacy_run: LegacyRunData) -> Dictionary:
+	if legacy_run == null:
+		return {}
+
+	return {
+		"legacy_run": legacy_run.serialize(),
+	}
+
+
 func create_legacy_from_current_run(result: String) -> LegacyRunData:
 	if not RunState.has_active_run() and not _has_legacy_snapshot_data():
 		return null

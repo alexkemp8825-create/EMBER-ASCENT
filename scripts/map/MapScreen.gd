@@ -2,17 +2,23 @@ extends PanelContainer
 
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
+const LegacyRunDataScript := preload("res://scripts/legacy/LegacyRunData.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
 @onready var tower_map_canvas: Control = %TowerMapCanvas
+@onready var abandon_button: Button = %AbandonButton
 
 
 func _ready() -> void:
 	if tower_map_canvas.has_signal("room_pressed"):
 		tower_map_canvas.room_pressed.connect(_on_room_pressed)
 
+	abandon_button.pressed.connect(_on_abandon_pressed)
 	_refresh_map()
+
+	if RunState.get_tower_state().is_boss_defeated():
+		_finish_victory_run()
 
 
 func _refresh_map() -> void:
@@ -72,3 +78,15 @@ func _get_battle_encounter_id(floor: int) -> String:
 		return "charred_rat"
 
 	return "furnace_cultist"
+
+
+func _on_abandon_pressed() -> void:
+	var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_ABANDONED)
+	RunState.reset_run()
+	SceneLoader.change_to_main_menu()
+
+
+func _finish_victory_run() -> void:
+	var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_VICTORY)
+	RunState.reset_run()
+	SceneLoader.change_to_victory(LegacyManager.build_run_end_payload(legacy_run))

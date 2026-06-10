@@ -1,6 +1,7 @@
 extends PanelContainer
 
 const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
+const LegacyRunDataScript := preload("res://scripts/legacy/LegacyRunData.gd")
 
 @onready var subtitle_label: Label = %SubtitleLabel
 @onready var gold_label: Label = %GoldLabel
@@ -153,5 +154,13 @@ func _clear_choices() -> void:
 
 
 func _on_continue_pressed() -> void:
+	var is_boss := bool(_payload.get("is_boss", false))
 	RunState.complete_active_room()
+
+	if is_boss:
+		var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_VICTORY)
+		RunState.reset_run()
+		SceneLoader.change_to_victory(LegacyManager.build_run_end_payload(legacy_run))
+		return
+
 	SceneLoader.change_to_map()

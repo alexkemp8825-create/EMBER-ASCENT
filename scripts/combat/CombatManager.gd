@@ -18,6 +18,7 @@ const PLACEHOLDER_STARTER_DECK := [
 const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
 const ENEMY_VIEW_SCENE := preload("res://scenes/combat/EnemyView.tscn")
 const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
+const LegacyRunDataScript := preload("res://scripts/legacy/LegacyRunData.gd")
 
 @onready var encounter_title: Label = %EncounterTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
@@ -434,9 +435,10 @@ func _handle_victory() -> void:
 
 func _handle_defeat() -> void:
 	_log("Defeat.")
-	SaveManager.delete_save()
+	RunState.current_hp = 0
+	var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_DEFEAT)
 	RunState.reset_run()
-	SceneLoader.change_to_main_menu()
+	SceneLoader.change_to_defeat(LegacyManager.build_run_end_payload(legacy_run))
 
 
 func _apply_combat_start_relics() -> void:

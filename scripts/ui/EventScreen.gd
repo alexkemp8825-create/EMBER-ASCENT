@@ -1,6 +1,7 @@
 extends PanelContainer
 
 const EventManagerScript := preload("res://scripts/events/EventManager.gd")
+const LegacyRunDataScript := preload("res://scripts/legacy/LegacyRunData.gd")
 
 @onready var title_label: Label = %TitleLabel
 @onready var description_label: Label = %DescriptionLabel
@@ -60,9 +61,10 @@ func _on_choice_pressed(event_data: EventData, choice_id: String) -> void:
 	continue_button.disabled = false
 
 	if RunState.current_hp <= 0:
-		SaveManager.delete_save()
+		var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_DEFEAT)
 		RunState.reset_run()
-		SceneLoader.change_to_main_menu()
+		SceneLoader.change_to_defeat(LegacyManager.build_run_end_payload(legacy_run))
+		return
 
 
 func _disable_choice_buttons() -> void:
