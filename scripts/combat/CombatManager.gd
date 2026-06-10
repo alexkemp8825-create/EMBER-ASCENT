@@ -52,21 +52,26 @@ var _selected_enemy_index: int = 0
 var _temporary_strength: int = 0
 var _death_recorded := false
 var _recorded_defeated_enemies: Array[String] = []
+var _payload_received := false
 
 
 func _ready() -> void:
 	end_turn_button.pressed.connect(_on_end_turn_pressed)
 	defeat_continue_button.pressed.connect(_on_defeat_continue_pressed)
 	defeat_panel.visible = false
-	call_deferred("_start_combat")
 
 
 func set_payload(payload: Dictionary) -> void:
-	encounter_id = payload.get("encounter_id", encounter_id)
+	encounter_id = str(payload.get("encounter_id", encounter_id))
+	if encounter_id == "":
+		encounter_id = "charred_rat"
+	_payload_received = true
+	if is_node_ready():
+		_start_combat()
 
 
 func _start_combat() -> void:
-	if _combat_started:
+	if _combat_started or not _payload_received:
 		return
 
 	_combat_started = true
@@ -82,6 +87,22 @@ func _start_combat() -> void:
 	discard_pile.clear()
 	exhaust_pile.clear()
 	_enemies = _create_enemy_encounter()
+
+	if _enemies.is_empty():
+		push_error("Combat started with no enemies for encounter_id: %s" % encounter_id)
+		var fallback := _enemy_database.create_enemy("charred_rat")
+		if fallback != null:
+			fallback.display_name = TowerMemoryManager.get_remembered_enemy_name(
+				fallback.enemy_id,
+				fallback.display_name
+			)
+			_enemies.append(fallback)
+		else:
+			push_error("Fallback charred_rat enemy failed to spawn.")
+			_handle_combat_setup_failure()
+			return
+
+	print("Starting combat encounter_id=", encounter_id, " enemies=", _enemies.size())
 	_selected_enemy_index = _get_first_living_enemy_index()
 
 	_log("Combat begins.")
@@ -107,13 +128,22 @@ func _create_enemy_encounter() -> Array[EnemyInstance]:
 	var enemies: Array[EnemyInstance] = []
 
 	for enemy_id in enemy_ids:
+		print("Requesting enemy_id=", enemy_id)
 		var enemy := _enemy_database.create_enemy(enemy_id)
-		if enemy != null:
-			enemy.display_name = TowerMemoryManager.get_remembered_enemy_name(
-				enemy.enemy_id,
-				enemy.display_name
-			)
-			enemies.append(enemy)
+		if enemy == null:
+			push_error("EnemyDatabase.create_enemy returned null for: %s" % enemy_id)
+			continue
+
+		enemy.display_name = TowerMemoryManager.get_remembered_enemy_name(
+			enemy.enemy_id,
+			enemy.display_name
+		)
+		enemies.append(enemy)
+
+	if enemies.is_empty():
+		push_error(
+			"No enemies spawned for encounter_id: %s (requested: %s)" % [encounter_id, enemy_ids]
+		)
 
 	return enemies
 
@@ -496,11 +526,21 @@ func _is_defeated() -> bool:
 
 
 func _are_all_enemies_defeated() -> bool:
+	if _enemies.is_empty():
+		return false
+
 	for enemy in _enemies:
 		if enemy.is_alive():
 			return false
 
 	return true
+
+
+func _handle_combat_setup_failure() -> void:
+	end_turn_button.disabled = true
+	defeat_message_label.text = "No enemies found for this encounter."
+	defeat_panel.visible = true
+	_log("Combat could not start.")
 
 
 func _handle_victory() -> void:
