@@ -34,6 +34,8 @@ const BOSS_REWARD_POOL: Array[String] = [
 	"smoldering_brand",
 ]
 
+const SHOP_RELIC_POOL: Array[String] = BOSS_REWARD_POOL
+
 var _relics: Dictionary = {}
 
 
@@ -59,6 +61,36 @@ func get_boss_reward_choices(count: int, excluded_ids: Array[String] = []) -> Ar
 	var candidates: Array[RelicData] = []
 
 	for relic_id in BOSS_REWARD_POOL:
+		if excluded_ids.has(relic_id):
+			continue
+
+		var relic_data := get_relic(relic_id)
+		if relic_data != null:
+			candidates.append(relic_data)
+
+	var shuffled: Array = RNG.shuffle_array(candidates)
+	var choices: Array[RelicData] = []
+
+	for relic in shuffled:
+		if choices.size() >= count:
+			break
+		choices.append(relic)
+
+	return choices
+
+
+func get_shop_relic_offer(excluded_ids: Array[String] = []) -> RelicData:
+	var choices := get_shop_relic_choices(1, excluded_ids)
+	if choices.is_empty():
+		return null
+
+	return choices[0]
+
+
+func get_shop_relic_choices(count: int, excluded_ids: Array[String] = []) -> Array[RelicData]:
+	var candidates: Array[RelicData] = []
+
+	for relic_id in SHOP_RELIC_POOL:
 		if excluded_ids.has(relic_id):
 			continue
 

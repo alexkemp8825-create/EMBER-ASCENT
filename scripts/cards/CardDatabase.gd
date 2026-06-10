@@ -232,18 +232,26 @@ func get_cards_by_class(class_id: String) -> Array[CardData]:
 
 
 func get_reward_cards(class_id: String, count: int) -> Array[CardData]:
+	return _pick_shopable_cards(class_id, count)
+
+
+func get_shop_cards(class_id: String, count: int) -> Array[CardData]:
+	return _pick_shopable_cards(class_id, count)
+
+
+func _pick_shopable_cards(class_id: String, count: int) -> Array[CardData]:
 	var candidates: Array[CardData] = []
 
 	for card_data in get_cards_by_class(class_id):
 		if card_data.rarity != "Starter" and card_data.card_type != "Status":
 			candidates.append(card_data)
 
-	var rewards: Array[CardData] = []
+	var results: Array[CardData] = []
 	var shuffled: Array = RNG.shuffle_array(candidates)
 
 	for card_data in shuffled:
-		if rewards.size() >= count:
+		if results.size() >= count:
 			break
-		rewards.append(card_data)
+		results.append(card_data)
 
-	return rewards
+	return results

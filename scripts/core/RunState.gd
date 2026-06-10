@@ -89,6 +89,44 @@ func add_gold(amount: int) -> void:
 	gold += amount
 
 
+func spend_gold(amount: int) -> bool:
+	if amount <= 0 or gold < amount:
+		return false
+
+	gold -= amount
+	return true
+
+
+func can_remove_card_from_deck(min_deck_size: int = 5) -> bool:
+	return deck.size() > min_deck_size
+
+
+func remove_card_from_deck(card_id: String, min_deck_size: int = 5) -> bool:
+	if not can_remove_card_from_deck(min_deck_size):
+		return false
+
+	var card_index := deck.find(card_id)
+	if card_index == -1:
+		return false
+
+	deck.remove_at(card_index)
+	return true
+
+
+func get_unique_deck_card_ids() -> Array[String]:
+	var unique_ids: Array[String] = []
+	var seen_ids := {}
+
+	for card_id in deck:
+		if seen_ids.has(card_id):
+			continue
+
+		seen_ids[card_id] = true
+		unique_ids.append(card_id)
+
+	return unique_ids
+
+
 func add_relic(relic_id: String) -> void:
 	if relic_id == "" or relics.has(relic_id):
 		return
