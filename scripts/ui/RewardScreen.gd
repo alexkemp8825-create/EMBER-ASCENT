@@ -139,9 +139,9 @@ func _disable_choice_buttons() -> void:
 	skip_button.disabled = true
 
 	for child in card_choices_container.get_children():
-		if child is Button or child.has_method("set_selection_mode"):
-			if child.has_method("set_selection_mode"):
-				child.set_selection_mode(false)
+		if child.has_method("set_selection_mode"):
+			child.set_selection_mode(false)
+		elif child is Button:
 			child.disabled = true
 
 	for child in relic_choices_container.get_children():
