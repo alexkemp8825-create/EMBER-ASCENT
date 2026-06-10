@@ -1,0 +1,30 @@
+[gd_scene format=3]
+
+[node name="RestScreen" type="PanelContainer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="MarginContainer/Content"]
+layout_mode = 2
+text = "Rest Site"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MarginContainer/Content"]
+layout_mode = 2
+text = "Rest screen placeholder"
+horizontal_alignment = 1
