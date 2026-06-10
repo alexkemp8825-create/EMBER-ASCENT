@@ -3,6 +3,7 @@ extends PanelContainer
 @onready var subtitle_label: Label = %Subtitle
 @onready var new_run_button: Button = %NewRunButton
 @onready var continue_button: Button = %ContinueRunButton
+@onready var dev_test_button: Button = %DevTestButton
 @onready var quit_button: Button = %QuitButton
 @onready var version_label: Label = %VersionLabel
 @onready var status_label: Label = %StatusLabel
@@ -15,6 +16,7 @@ func _ready() -> void:
 	status_label.text = _get_launch_hint()
 	new_run_button.pressed.connect(_on_new_run_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
+	dev_test_button.pressed.connect(_on_dev_test_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	_refresh_continue_button()
 
@@ -49,6 +51,10 @@ func _on_continue_pressed() -> void:
 		return
 
 	SceneLoader.change_to_map()
+
+
+func _on_dev_test_pressed() -> void:
+	SceneLoader.change_to_dev_test()
 
 
 func _on_quit_pressed() -> void:
