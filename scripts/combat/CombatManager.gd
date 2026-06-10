@@ -434,6 +434,7 @@ func _handle_victory() -> void:
 
 func _handle_defeat() -> void:
 	_log("Defeat.")
+	SaveManager.delete_save()
 	RunState.reset_run()
 	SceneLoader.change_to_main_menu()
 

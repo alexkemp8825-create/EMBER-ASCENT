@@ -13,6 +13,7 @@ config/features=PackedStringArray("4.0")
 
 GameState="*res://scripts/core/GameState.gd"
 RunState="*res://scripts/core/RunState.gd"
+SaveManager="*res://scripts/core/SaveManager.gd"
 SceneLoader="*res://scripts/core/SceneLoader.gd"
 RNG="*res://scripts/core/RNG.gd"
 

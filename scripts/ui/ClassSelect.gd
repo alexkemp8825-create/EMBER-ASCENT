@@ -47,6 +47,7 @@ func _disable_coming_soon_buttons() -> void:
 
 func _on_ash_knight_pressed() -> void:
 	_start_ash_knight_run()
+	SaveManager.save_run()
 	status_label.text = "Ash Knight selected. Entering The Living Tower..."
 	SceneLoader.change_to_map()
 

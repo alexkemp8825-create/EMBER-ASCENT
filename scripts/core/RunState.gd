@@ -39,6 +39,54 @@ func has_active_run() -> bool:
 	return selected_class != "" and current_hp > 0
 
 
+func serialize() -> Dictionary:
+	var tower_data: Dictionary = {}
+	if tower_state != null:
+		tower_data = tower_state.serialize()
+
+	return {
+		"selected_class": selected_class,
+		"max_hp": max_hp,
+		"current_hp": current_hp,
+		"gold": gold,
+		"deck": deck.duplicate(),
+		"relics": relics.duplicate(),
+		"current_act": current_act,
+		"current_floor": current_floor,
+		"current_node_id": current_node_id,
+		"run_seed": run_seed,
+		"active_room_id": active_room_id,
+		"tower_state": tower_data,
+	}
+
+
+func deserialize(data: Dictionary) -> void:
+	reset_run()
+
+	selected_class = str(data.get("selected_class", ""))
+	max_hp = int(data.get("max_hp", 0))
+	current_hp = int(data.get("current_hp", 0))
+	gold = int(data.get("gold", 0))
+	current_act = int(data.get("current_act", 1))
+	current_floor = int(data.get("current_floor", 0))
+	current_node_id = str(data.get("current_node_id", ""))
+	run_seed = int(data.get("run_seed", 0))
+	active_room_id = ""
+
+	deck.clear()
+	for card_id in data.get("deck", []):
+		deck.append(str(card_id))
+
+	relics.clear()
+	for relic_id in data.get("relics", []):
+		relics.append(str(relic_id))
+
+	var tower_data: Variant = data.get("tower_state", {})
+	if tower_data is Dictionary and not tower_data.is_empty():
+		tower_state = TowerStateScript.new()
+		tower_state.deserialize(tower_data)
+
+
 func create_new_tower() -> void:
 	tower_state = TowerStateScript.new()
 	var seed_value := run_seed if run_seed != 0 else int(Time.get_unix_time_from_system())
@@ -72,7 +120,18 @@ func complete_active_room() -> bool:
 		current_floor = get_tower_state().get_room(active_room_id).floor
 
 	active_room_id = ""
+
+	if completed:
+		_persist_run_progress()
+
 	return completed
+
+
+func _persist_run_progress() -> void:
+	if get_tower_state().is_boss_defeated():
+		SaveManager.delete_save()
+	else:
+		SaveManager.save_run()
 
 
 func add_card_to_deck(card_id: String) -> void:
