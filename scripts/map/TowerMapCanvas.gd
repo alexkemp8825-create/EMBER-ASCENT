@@ -81,7 +81,15 @@ func _draw() -> void:
 
 		var from_position := _room_screen_position(from_room)
 		var to_position := _room_screen_position(to_room)
-		draw_line(from_position, to_position, Color(0.75, 0.55, 0.35, 0.9), 3.0)
+		var line_color := _get_connection_color(from_room, to_room)
+		draw_line(from_position, to_position, line_color, 3.0)
+
+
+func _get_connection_color(from_room: TowerRoomData, to_room: TowerRoomData) -> Color:
+	if from_room.is_ghost or to_room.is_ghost:
+		return Color(0.55, 0.45, 0.9, 0.75)
+
+	return Color(0.75, 0.55, 0.35, 0.9)
 
 
 func _on_room_pressed(room: TowerRoomData) -> void:

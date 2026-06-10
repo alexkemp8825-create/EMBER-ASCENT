@@ -4,6 +4,7 @@ class_name TowerState
 const TowerRoomDataScript := preload("res://scripts/tower/TowerRoomData.gd")
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
+const GhostRoomPlacerScript := preload("res://scripts/tower/GhostRoomPlacer.gd")
 const EventDatabaseScript := preload("res://scripts/events/EventDatabase.gd")
 const EnemyDatabaseScript := preload("res://scripts/enemies/EnemyDatabase.gd")
 
@@ -32,6 +33,8 @@ func create_new_tower(seed_value: int = -1, tower_act: int = 1) -> void:
 		_:
 			TowerGeneratorScript.generate_act_one(self, tower_seed)
 
+	GhostRoomPlacerScript.add_ghost_rooms(self, tower_seed)
+
 
 func add_room(room_type: String, source_card_id: String, floor: int) -> TowerRoomData:
 	return add_room_at(room_type, floor, 0, source_card_id)
@@ -49,6 +52,49 @@ func add_room_at(
 	rooms.append(room)
 	highest_floor = max(highest_floor, floor)
 	return room
+
+
+func add_ghost_room_at(
+	floor: int,
+	lane: int,
+	source_legacy_id: String,
+	run_number: int,
+	original_room_type: String,
+	ghost_strength: String,
+	anchor_room_id: String
+) -> TowerRoomData:
+	var room_id := _generate_room_id(TowerRoomDatabaseScript.ROOM_GHOST)
+	var room := _create_room(
+		room_id,
+		TowerRoomDatabaseScript.ROOM_GHOST,
+		"",
+		floor,
+		lane
+	)
+	room.is_ghost = true
+	room.source_legacy_id = source_legacy_id
+	room.original_room_type = original_room_type
+	room.ghost_strength = ghost_strength
+	room.ghost_anchor_room_id = anchor_room_id
+	room.display_name = "GHOST\nRun %d" % run_number
+	rooms.append(room)
+	highest_floor = max(highest_floor, floor)
+	return room
+
+
+func complete_ghost_room(room_id: String) -> bool:
+	var room := get_room(room_id)
+	if room == null or not room.is_ghost:
+		return false
+
+	room.completed = true
+	if room.ghost_anchor_room_id != "":
+		current_room_id = room.ghost_anchor_room_id
+	else:
+		current_room_id = room.room_id
+
+	highest_floor = max(highest_floor, room.floor)
+	return true
 
 
 func connect_rooms(room_a_id: String, room_b_id: String) -> bool:

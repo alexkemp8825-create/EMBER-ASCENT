@@ -3,16 +3,19 @@ extends PanelContainer
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
 const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
 const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
+const LegacyRunDataScript := preload("res://scripts/legacy/LegacyRunData.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
 @onready var tower_map_canvas: Control = %TowerMapCanvas
+@onready var abandon_button: Button = %AbandonButton
 
 
 func _ready() -> void:
 	if tower_map_canvas.has_signal("room_pressed"):
 		tower_map_canvas.room_pressed.connect(_on_room_pressed)
 
+	abandon_button.pressed.connect(_on_abandon_pressed)
 	_refresh_map()
 
 
@@ -65,8 +68,18 @@ func _on_room_pressed(room: TowerRoomData) -> void:
 			SceneLoader.change_to_shrine()
 		TowerRoomDatabaseScript.ROOM_EVENT:
 			SceneLoader.change_to_event(room.source_card_id)
+		TowerRoomDatabaseScript.ROOM_GHOST:
+			SceneLoader.change_to_ghost_room({
+				"legacy_id": room.source_legacy_id,
+			})
 		_:
 			push_warning("Unhandled room type: %s" % room.room_type)
+
+
+func _on_abandon_pressed() -> void:
+	var legacy_run := LegacyManager.finalize_run_end(LegacyRunDataScript.RESULT_ABANDONED)
+	RunState.reset_run()
+	SceneLoader.change_to_main_menu()
 
 
 func _get_elite_encounter_id(room: TowerRoomData) -> String:

@@ -51,3 +51,10 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Choose your next room."
 horizontal_alignment = 1
+
+[node name="AbandonButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Abandon Run"

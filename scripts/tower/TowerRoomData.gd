@@ -9,6 +9,11 @@ var position: Vector2 = Vector2.ZERO
 var connected_room_ids: Array[String] = []
 var source_card_id: String = ""
 var completed: bool = false
+var is_ghost: bool = false
+var source_legacy_id: String = ""
+var original_room_type: String = ""
+var ghost_strength: String = ""
+var ghost_anchor_room_id: String = ""
 
 
 func _init(
@@ -40,6 +45,11 @@ func serialize() -> Dictionary:
 		"connected_room_ids": connected_room_ids.duplicate(),
 		"source_card_id": source_card_id,
 		"completed": completed,
+		"is_ghost": is_ghost,
+		"source_legacy_id": source_legacy_id,
+		"original_room_type": original_room_type,
+		"ghost_strength": ghost_strength,
+		"ghost_anchor_room_id": ghost_anchor_room_id,
 	}
 
 
@@ -52,6 +62,11 @@ static func deserialize(data: Dictionary) -> TowerRoomData:
 	room.position = _deserialize_position(data.get("position", {}))
 	room.source_card_id = str(data.get("source_card_id", ""))
 	room.completed = bool(data.get("completed", false))
+	room.is_ghost = bool(data.get("is_ghost", false))
+	room.source_legacy_id = str(data.get("source_legacy_id", ""))
+	room.original_room_type = str(data.get("original_room_type", ""))
+	room.ghost_strength = str(data.get("ghost_strength", ""))
+	room.ghost_anchor_room_id = str(data.get("ghost_anchor_room_id", ""))
 
 	room.connected_room_ids.clear()
 	for connected_room_id in data.get("connected_room_ids", []):
