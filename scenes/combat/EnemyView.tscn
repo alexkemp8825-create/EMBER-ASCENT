@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/EnemyView.gd" id="1_enemy_view"]
+
+[node name="EnemyView" type="PanelContainer"]
+custom_minimum_size = Vector2(240, 160)
+script = ExtResource("1_enemy_view")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Enemy"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HPLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HP: -"
+horizontal_alignment = 1
+
+[node name="BlockLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Block: -"
+horizontal_alignment = 1
+
+[node name="IntentLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Intent: -"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="TargetButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+text = "Target"

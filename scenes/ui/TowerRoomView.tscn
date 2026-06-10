@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/TowerRoomView.gd" id="1_tower_room_view"]
+
+[node name="TowerRoomView" type="Button"]
+custom_minimum_size = Vector2(140, 72)
+layout_mode = 0
+text = "Room"
+script = ExtResource("1_tower_room_view")

@@ -1,0 +1,71 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/CardView.gd" id="1_card_view"]
+
+[node name="CardView" type="PanelContainer"]
+custom_minimum_size = Vector2(220, 320)
+offset_right = 220.0
+offset_bottom = 320.0
+script = ExtResource("1_card_view")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CostPanel" type="PanelContainer" parent="MarginContainer/Content/Header"]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+
+[node name="CostLabel" type="Label" parent="MarginContainer/Content/Header/CostPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameLabel" type="Label" parent="MarginContainer/Content/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Card Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TypeLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Type"
+horizontal_alignment = 1
+
+[node name="Separator" type="HSeparator" parent="MarginContainer/Content"]
+layout_mode = 2
+
+[node name="DescriptionPanel" type="PanelContainer" parent="MarginContainer/Content"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DescriptionLabel" type="Label" parent="MarginContainer/Content/DescriptionPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Card description."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="PlayButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "Play"
