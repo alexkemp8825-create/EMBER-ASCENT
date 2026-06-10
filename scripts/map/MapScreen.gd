@@ -1,6 +1,7 @@
 extends PanelContainer
 
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
+const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
 
 @onready var stats_label: Label = %StatsLabel
 @onready var status_label: Label = %StatusLabel
@@ -16,19 +17,25 @@ func _ready() -> void:
 
 func _refresh_map() -> void:
 	var tower_state := RunState.get_tower_state()
-	stats_label.text = "HP: %d/%d  |  Gold: %d  |  Floor: %d" % [
+	var current_room := tower_state.get_room(tower_state.current_room_id)
+	stats_label.text = "HP: %d/%d  |  Gold: %d  |  Act %d Floor %d" % [
 		RunState.current_hp,
 		RunState.max_hp,
 		RunState.gold,
-		tower_state.get_room(tower_state.current_room_id).floor if tower_state.get_room(tower_state.current_room_id) != null else 0,
+		RunState.current_act,
+		current_room.floor if current_room != null else 0,
 	]
 
 	if tower_map_canvas.has_method("refresh"):
 		tower_map_canvas.refresh(tower_state)
 
+	if tower_state.is_boss_defeated():
+		status_label.text = "Act %d complete! Further ascents are coming soon." % RunState.current_act
+		return
+
 	var available_rooms := tower_state.get_available_rooms()
 	if available_rooms.is_empty():
-		status_label.text = "Tower path complete. More floors coming soon."
+		status_label.text = "No paths remain from here."
 	else:
 		status_label.text = "Choose your next room."
 
@@ -45,21 +52,21 @@ func _on_room_pressed(room: TowerRoomData) -> void:
 			SceneLoader.change_to_rest()
 		TowerRoomDatabaseScript.ROOM_MARKET:
 			SceneLoader.change_to_shop()
+		TowerRoomDatabaseScript.ROOM_FORGE:
+			SceneLoader.change_to_forge()
+		TowerRoomDatabaseScript.ROOM_OBSERVATORY:
+			SceneLoader.change_to_observatory()
+		TowerRoomDatabaseScript.ROOM_SHRINE:
+			SceneLoader.change_to_shrine()
 		_:
-			_complete_placeholder_room(room)
+			push_warning("Unhandled room type: %s" % room.room_type)
 
 
 func _get_battle_encounter_id(floor: int) -> String:
-	if floor >= 3:
+	if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
 		return "molten_guard"
 
-	if floor >= 2:
-		return "furnace_cultist"
+	if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
+		return "charred_rat"
 
-	return "charred_rat"
-
-
-func _complete_placeholder_room(room: TowerRoomData) -> void:
-	RunState.complete_active_room()
-	status_label.text = "%s cleared." % room.display_name
-	_refresh_map()
+	return "furnace_cultist"

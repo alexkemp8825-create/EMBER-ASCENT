@@ -3,8 +3,10 @@ class_name TowerState
 
 const TowerRoomDataScript := preload("res://scripts/tower/TowerRoomData.gd")
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
+const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
 
 const ROOM_VERTICAL_SPACING := 160.0
+const HORIZONTAL_LANE_SPACING := 180.0
 
 var rooms: Array = []
 var connections: Array = []
@@ -13,47 +15,27 @@ var highest_floor: int = 0
 var tower_seed: int = 0
 
 
-func create_new_tower() -> void:
-	rooms.clear()
-	connections.clear()
+func create_new_tower(seed_value: int = -1) -> void:
+	if seed_value < 0:
+		tower_seed = int(Time.get_unix_time_from_system())
+	else:
+		tower_seed = seed_value
 
-	tower_seed = int(Time.get_unix_time_from_system())
-
-	var entrance := _create_room(
-		"room_0",
-		TowerRoomDatabaseScript.ROOM_ENTRANCE,
-		"",
-		0
-	)
-	var battle := _create_room(
-		"room_1",
-		TowerRoomDatabaseScript.ROOM_BATTLE,
-		"",
-		1
-	)
-	var boss := _create_room(
-		"room_2",
-		TowerRoomDatabaseScript.ROOM_BOSS,
-		"",
-		5
-	)
-
-	entrance.completed = true
-
-	rooms.append(entrance)
-	rooms.append(battle)
-	rooms.append(boss)
-
-	current_room_id = entrance.room_id
-	highest_floor = boss.floor
-
-	connect_rooms(entrance.room_id, battle.room_id)
-	connect_rooms(battle.room_id, boss.room_id)
+	TowerGeneratorScript.generate_act_one(self, tower_seed)
 
 
 func add_room(room_type: String, source_card_id: String, floor: int) -> TowerRoomData:
+	return add_room_at(room_type, floor, 0, source_card_id)
+
+
+func add_room_at(
+	room_type: String,
+	floor: int,
+	lane: int,
+	source_card_id: String = ""
+) -> TowerRoomData:
 	var room_id := _generate_room_id(room_type)
-	var room := _create_room(room_id, room_type, source_card_id, floor)
+	var room := _create_room(room_id, room_type, source_card_id, floor, lane)
 	rooms.append(room)
 	highest_floor = max(highest_floor, floor)
 	return room
@@ -91,6 +73,14 @@ func get_available_rooms() -> Array:
 			available_rooms.append(connected_room)
 
 	return available_rooms
+
+
+func is_boss_defeated() -> bool:
+	for room in rooms:
+		if room.room_type == TowerRoomDatabaseScript.ROOM_BOSS and room.completed:
+			return true
+
+	return false
 
 
 func mark_room_completed(room_id: String) -> bool:
@@ -150,9 +140,18 @@ func deserialize(data: Dictionary) -> void:
 	tower_seed = int(data.get("tower_seed", 0))
 
 
-func _create_room(room_id: String, room_type: String, source_card_id: String, floor: int) -> TowerRoomData:
+func _create_room(
+	room_id: String,
+	room_type: String,
+	source_card_id: String,
+	floor: int,
+	lane: int = 0
+) -> TowerRoomData:
 	var display_name := TowerRoomDatabaseScript.get_default_display_name(room_type)
-	var room_position := Vector2(0.0, -float(floor) * ROOM_VERTICAL_SPACING)
+	var room_position := Vector2(
+		float(lane) * HORIZONTAL_LANE_SPACING,
+		-float(floor) * ROOM_VERTICAL_SPACING
+	)
 	return TowerRoomDataScript.new(
 		room_id,
 		room_type,

@@ -41,7 +41,8 @@ func has_active_run() -> bool:
 
 func create_new_tower() -> void:
 	tower_state = TowerStateScript.new()
-	tower_state.create_new_tower()
+	var seed_value := run_seed if run_seed != 0 else int(Time.get_unix_time_from_system())
+	tower_state.create_new_tower(seed_value)
 	current_floor = 0
 	current_node_id = tower_state.current_room_id
 

@@ -41,7 +41,7 @@ horizontal_scroll_mode = 0
 
 [node name="TowerMapCanvas" type="Control" parent="MarginContainer/Content/TowerMapScroll"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(800, 960)
+custom_minimum_size = Vector2(920, 960)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("2_tower_map_canvas")

@@ -6,7 +6,7 @@ signal room_pressed(room: TowerRoomData)
 
 const ROOM_NODE_SIZE := Vector2(140, 72)
 const CANVAS_PADDING := Vector2(80, 80)
-const CANVAS_WIDTH := 800.0
+const CANVAS_WIDTH := 920.0
 const CANVAS_BASE_HEIGHT := 960.0
 
 var _tower_state: TowerState

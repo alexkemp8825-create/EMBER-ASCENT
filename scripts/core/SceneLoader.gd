@@ -7,6 +7,9 @@ const COMBAT := "combat"
 const REWARDS := "rewards"
 const SHOP := "shop"
 const REST := "rest"
+const FORGE := "forge"
+const OBSERVATORY := "observatory"
+const SHRINE := "shrine"
 
 
 func change_to_main_menu() -> void:
@@ -35,6 +38,18 @@ func change_to_shop() -> void:
 
 func change_to_rest() -> void:
 	_change_screen(REST)
+
+
+func change_to_forge() -> void:
+	_change_screen(FORGE)
+
+
+func change_to_observatory() -> void:
+	_change_screen(OBSERVATORY)
+
+
+func change_to_shrine() -> void:
+	_change_screen(SHRINE)
 
 
 func _change_screen(screen_name: String, payload: Variant = null) -> void:

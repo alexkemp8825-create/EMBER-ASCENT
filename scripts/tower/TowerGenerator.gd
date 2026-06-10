@@ -1,0 +1,87 @@
+class_name TowerGenerator
+extends RefCounted
+
+const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
+
+const FLOOR_ENTRANCE := 0
+const FLOOR_FIRST_BATTLE := 1
+const FLOOR_BRANCH_A := 2
+const FLOOR_CONVERGENCE_BATTLE := 3
+const FLOOR_SPECIAL_BRANCH := 4
+const FLOOR_BOSS := 5
+
+
+static func generate_act_one(tower_state: TowerState, seed_value: int) -> void:
+	tower_state.rooms.clear()
+	tower_state.connections.clear()
+	tower_state.tower_seed = seed_value
+
+	var rng := RandomNumberGenerator.new()
+	rng.seed = seed_value
+
+	var entrance := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_ENTRANCE, FLOOR_ENTRANCE, 0)
+	entrance.completed = true
+
+	var first_battle := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_BATTLE, FLOOR_FIRST_BATTLE, 0)
+	var left_branch := _pick_floor_two_left_room(rng)
+	var right_branch := _pick_floor_two_right_room(rng)
+	var rest_room := tower_state.add_room_at(left_branch, FLOOR_BRANCH_A, -1)
+	var market_room := tower_state.add_room_at(right_branch, FLOOR_BRANCH_A, 1)
+	var convergence_battle := tower_state.add_room_at(
+		TowerRoomDatabaseScript.ROOM_BATTLE,
+		FLOOR_CONVERGENCE_BATTLE,
+		0
+	)
+
+	var special_rooms := _pick_special_rooms(rng)
+	var forge_room := tower_state.add_room_at(special_rooms[0], FLOOR_SPECIAL_BRANCH, -1)
+	var shrine_room := tower_state.add_room_at(special_rooms[1], FLOOR_SPECIAL_BRANCH, 0)
+	var observatory_room := tower_state.add_room_at(special_rooms[2], FLOOR_SPECIAL_BRANCH, 1)
+	var boss_room := tower_state.add_room_at(TowerRoomDatabaseScript.ROOM_BOSS, FLOOR_BOSS, 0)
+
+	tower_state.connect_rooms(entrance.room_id, first_battle.room_id)
+	tower_state.connect_rooms(first_battle.room_id, rest_room.room_id)
+	tower_state.connect_rooms(first_battle.room_id, market_room.room_id)
+	tower_state.connect_rooms(rest_room.room_id, convergence_battle.room_id)
+	tower_state.connect_rooms(market_room.room_id, convergence_battle.room_id)
+	tower_state.connect_rooms(convergence_battle.room_id, forge_room.room_id)
+	tower_state.connect_rooms(convergence_battle.room_id, shrine_room.room_id)
+	tower_state.connect_rooms(convergence_battle.room_id, observatory_room.room_id)
+	tower_state.connect_rooms(forge_room.room_id, boss_room.room_id)
+	tower_state.connect_rooms(shrine_room.room_id, boss_room.room_id)
+	tower_state.connect_rooms(observatory_room.room_id, boss_room.room_id)
+
+	tower_state.current_room_id = entrance.room_id
+	tower_state.highest_floor = FLOOR_BOSS
+
+
+static func _pick_floor_two_left_room(rng: RandomNumberGenerator) -> String:
+	var options: Array[String] = [
+		TowerRoomDatabaseScript.ROOM_REST,
+		TowerRoomDatabaseScript.ROOM_SHRINE,
+	]
+	return options[rng.randi_range(0, options.size() - 1)]
+
+
+static func _pick_floor_two_right_room(rng: RandomNumberGenerator) -> String:
+	var options: Array[String] = [
+		TowerRoomDatabaseScript.ROOM_MARKET,
+		TowerRoomDatabaseScript.ROOM_OBSERVATORY,
+	]
+	return options[rng.randi_range(0, options.size() - 1)]
+
+
+static func _pick_special_rooms(rng: RandomNumberGenerator) -> Array[String]:
+	var room_types: Array[String] = [
+		TowerRoomDatabaseScript.ROOM_FORGE,
+		TowerRoomDatabaseScript.ROOM_SHRINE,
+		TowerRoomDatabaseScript.ROOM_OBSERVATORY,
+	]
+
+	for index in range(room_types.size() - 1, 0, -1):
+		var swap_index := rng.randi_range(0, index)
+		var current_value: String = room_types[index]
+		room_types[index] = room_types[swap_index]
+		room_types[swap_index] = current_value
+
+	return room_types

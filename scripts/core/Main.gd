@@ -7,6 +7,9 @@ const COMBAT := "combat"
 const REWARDS := "rewards"
 const SHOP := "shop"
 const REST := "rest"
+const FORGE := "forge"
+const OBSERVATORY := "observatory"
+const SHRINE := "shrine"
 
 const SCREEN_SCENES := {
 	MAIN_MENU: preload("res://scenes/ui/MainMenu.tscn"),
@@ -16,6 +19,9 @@ const SCREEN_SCENES := {
 	REWARDS: preload("res://scenes/rewards/RewardScreen.tscn"),
 	SHOP: preload("res://scenes/shop/ShopScreen.tscn"),
 	REST: preload("res://scenes/rest/RestScreen.tscn"),
+	FORGE: preload("res://scenes/tower/ForgeScreen.tscn"),
+	OBSERVATORY: preload("res://scenes/tower/ObservatoryScreen.tscn"),
+	SHRINE: preload("res://scenes/tower/ShrineScreen.tscn"),
 }
 
 @onready var screen_root: Control = %ScreenRoot
@@ -73,3 +79,15 @@ func change_to_shop() -> void:
 
 func change_to_rest() -> void:
 	change_screen(REST)
+
+
+func change_to_forge() -> void:
+	change_screen(FORGE)
+
+
+func change_to_observatory() -> void:
+	change_screen(OBSERVATORY)
+
+
+func change_to_shrine() -> void:
+	change_screen(SHRINE)
