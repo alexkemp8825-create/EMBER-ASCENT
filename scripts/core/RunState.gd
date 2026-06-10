@@ -1,5 +1,7 @@
 extends Node
 
+const TowerStateScript := preload("res://scripts/tower/TowerState.gd")
+
 var selected_class: String = ""
 var max_hp: int = 0
 var current_hp: int = 0
@@ -12,6 +14,8 @@ var map_data: Array = []
 var completed_nodes: Array[String] = []
 var current_node_id: String = ""
 var run_seed: int = 0
+var tower_state: TowerState
+var active_room_id: String = ""
 
 
 func reset_run() -> void:
@@ -27,7 +31,44 @@ func reset_run() -> void:
 	completed_nodes.clear()
 	current_node_id = ""
 	run_seed = 0
+	tower_state = null
+	active_room_id = ""
 
 
 func has_active_run() -> bool:
 	return selected_class != "" and current_hp > 0
+
+
+func create_new_tower() -> void:
+	tower_state = TowerStateScript.new()
+	tower_state.create_new_tower()
+	current_floor = 0
+	current_node_id = tower_state.current_room_id
+
+
+func get_tower_state() -> TowerState:
+	if tower_state == null:
+		create_new_tower()
+
+	return tower_state
+
+
+func enter_room(room_id: String) -> void:
+	active_room_id = room_id
+	var room := get_tower_state().get_room(room_id)
+	if room != null:
+		current_floor = room.floor
+		current_node_id = room_id
+
+
+func complete_active_room() -> bool:
+	if active_room_id == "":
+		return false
+
+	var completed := get_tower_state().mark_room_completed(active_room_id)
+	if completed:
+		current_node_id = get_tower_state().current_room_id
+		current_floor = get_tower_state().get_room(active_room_id).floor
+
+	active_room_id = ""
+	return completed

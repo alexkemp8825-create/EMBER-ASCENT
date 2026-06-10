@@ -47,7 +47,7 @@ func _disable_coming_soon_buttons() -> void:
 
 func _on_ash_knight_pressed() -> void:
 	_start_ash_knight_run()
-	status_label.text = "Ash Knight selected. Entering The Ember Spire..."
+	status_label.text = "Ash Knight selected. Entering The Living Tower..."
 	SceneLoader.change_to_map()
 
 
@@ -58,8 +58,6 @@ func _start_ash_knight_run() -> void:
 	RunState.current_hp = ASH_KNIGHT_MAX_HP
 	RunState.gold = ASH_KNIGHT_STARTING_GOLD
 	RunState.current_act = 1
-	RunState.current_floor = 0
-	RunState.current_node_id = ""
 	RunState.run_seed = int(Time.get_unix_time_from_system())
 
 	RunState.deck.clear()
@@ -70,17 +68,5 @@ func _start_ash_knight_run() -> void:
 	RunState.relics.append(ASH_KNIGHT_STARTER_RELIC)
 
 	RNG.set_seed(RunState.run_seed)
-	RunState.map_data = _create_phase_four_map()
+	RunState.create_new_tower()
 	RunState.completed_nodes.clear()
-
-
-func _create_phase_four_map() -> Array:
-	return [
-		{
-			"id": "floor_0_battle_0",
-			"floor": 0,
-			"type": "battle",
-			"connected_to": [],
-			"available": true,
-		},
-	]
