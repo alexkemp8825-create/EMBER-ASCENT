@@ -79,8 +79,20 @@ func _get_main_controller() -> Node:
 		return current_scene
 
 	for child in get_tree().root.get_children():
-		if child != current_scene and child.has_method("change_screen"):
+		if child.has_method("change_screen"):
 			return child
+
+	return _find_main_controller(get_tree().root)
+
+
+func _find_main_controller(node: Node) -> Node:
+	for child in node.get_children():
+		if child.has_method("change_screen"):
+			return child
+
+		var nested := _find_main_controller(child)
+		if nested != null:
+			return nested
 
 	return null
 
