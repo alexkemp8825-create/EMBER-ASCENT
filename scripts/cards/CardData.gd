@@ -20,7 +20,11 @@ func setup(data: Dictionary) -> CardData:
 	rarity = data.get("rarity", "")
 	description = data.get("description", "")
 	target_type = data.get("target_type", "")
-	effects = data.get("effects", []).duplicate(true)
+	effects.clear()
+	for effect in data.get("effects", []):
+		if effect is Dictionary:
+			effects.append(effect)
+
 	upgraded_id = data.get("upgraded_id", "")
 	return self
 

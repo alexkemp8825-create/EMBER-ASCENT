@@ -11,5 +11,9 @@ func setup(data: Dictionary) -> EnemyData:
 	id = data.get("id", "")
 	display_name = data.get("display_name", "")
 	max_hp = data.get("max_hp", 0)
-	actions = data.get("actions", []).duplicate(true)
+	actions.clear()
+	for action in data.get("actions", []):
+		if action is Dictionary:
+			actions.append(action)
+
 	return self

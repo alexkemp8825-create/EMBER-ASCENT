@@ -20,7 +20,10 @@ func setup(data: EnemyData) -> EnemyInstance:
 	block = 0
 	strength = 0
 	burn_stacks = 0
-	actions = data.actions.duplicate(true)
+	actions.clear()
+	for action in data.actions:
+		actions.append(action)
+
 	action_index = 0
 	return self
 
