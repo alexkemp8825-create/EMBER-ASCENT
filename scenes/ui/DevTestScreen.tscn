@@ -1,0 +1,98 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/DevTestScreen.gd" id="1_dev_test"]
+
+[node name="DevTestScreen" type="PanelContainer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dev_test")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 48
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 48
+
+[node name="Content" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Title" type="Label" parent="MarginContainer/Content"]
+layout_mode = 2
+text = "Developer Test Menu"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MarginContainer/Content"]
+layout_mode = 2
+text = "Jump directly to screens for testing."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="AshKnightCombatButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Start Ash Knight Combat"
+
+[node name="CinderWitchCombatButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Start Cinder Witch Combat"
+
+[node name="MapButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Map With Test Run"
+
+[node name="RewardButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Reward Screen"
+
+[node name="ShopButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Shop"
+
+[node name="EventButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open Event"
+
+[node name="ClearSaveButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Clear Save"
+
+[node name="BackButton" type="Button" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 52)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Back to Main Menu"
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Pick a screen to open for testing."
+horizontal_alignment = 1
+autowrap_mode = 2

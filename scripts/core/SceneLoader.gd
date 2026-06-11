@@ -13,6 +13,7 @@ const FORGE := "forge"
 const OBSERVATORY := "observatory"
 const SHRINE := "shrine"
 const EVENT := "event"
+const DEV_TEST := "dev_test"
 
 
 func change_to_main_menu() -> void:
@@ -58,6 +59,10 @@ func change_to_shrine() -> void:
 
 func change_to_event(event_id: String) -> void:
 	_change_screen(EVENT, {"event_id": event_id})
+
+
+func change_to_dev_test() -> void:
+	_change_screen(DEV_TEST)
 
 
 func _change_screen(screen_name: String, payload: Variant = null) -> void:

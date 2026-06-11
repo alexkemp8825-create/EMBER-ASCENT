@@ -11,6 +11,7 @@ const FORGE := "forge"
 const OBSERVATORY := "observatory"
 const SHRINE := "shrine"
 const EVENT := "event"
+const DEV_TEST := "dev_test"
 
 const SCREEN_SCENES := {
 	MAIN_MENU: preload("res://scenes/ui/MainMenu.tscn"),
@@ -24,6 +25,7 @@ const SCREEN_SCENES := {
 	OBSERVATORY: preload("res://scenes/tower/ObservatoryScreen.tscn"),
 	SHRINE: preload("res://scenes/tower/ShrineScreen.tscn"),
 	EVENT: preload("res://scenes/events/EventScreen.tscn"),
+	DEV_TEST: preload("res://scenes/ui/DevTestScreen.tscn"),
 }
 
 @onready var screen_root: Control = %ScreenRoot
@@ -100,3 +102,7 @@ func change_to_shrine() -> void:
 
 func change_to_event(event_id: String = "") -> void:
 	change_screen(EVENT, {"event_id": event_id})
+
+
+func change_to_dev_test() -> void:
+	change_screen(DEV_TEST)
