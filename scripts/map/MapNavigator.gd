@@ -11,11 +11,19 @@ static func travel_to_room(room: TowerRoomData) -> void:
 		push_error("MapNavigator.travel_to_room called with null room.")
 		return
 
+	print(
+		"TRAVEL TO ROOM type=", room.room_type,
+		" id=", room.room_id,
+		" floor=", room.floor
+	)
+
 	RunState.enter_room(room.room_id)
 
 	match room.room_type:
 		TowerRoomDatabaseScript.ROOM_BATTLE:
-			SceneLoader.change_to_combat(get_battle_encounter_id(room.floor))
+			var encounter_id := get_battle_encounter_id(room.floor)
+			print("ROUTING TO COMBAT encounter_id=", encounter_id)
+			SceneLoader.change_to_combat(encounter_id)
 		TowerRoomDatabaseScript.ROOM_ELITE:
 			SceneLoader.change_to_combat(get_elite_encounter_id(room))
 		TowerRoomDatabaseScript.ROOM_BOSS:
@@ -51,7 +59,14 @@ static func begin_new_run() -> bool:
 	_ensure_tower_is_ready()
 	var first_room := get_first_available_room()
 	if first_room == null:
+		push_error("MapNavigator.begin_new_run: no available room from tower entrance.")
 		return false
+
+	if first_room.room_type != TowerRoomDatabaseScript.ROOM_BATTLE:
+		push_warning(
+			"MapNavigator.begin_new_run: expected first battle room, got %s"
+			% first_room.room_type
+		)
 
 	travel_to_room(first_room)
 	return true

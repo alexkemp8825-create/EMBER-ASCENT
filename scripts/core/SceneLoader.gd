@@ -28,6 +28,7 @@ func change_to_map() -> void:
 
 
 func change_to_combat(encounter_id: String) -> void:
+	print("SceneLoader.change_to_combat encounter_id=", encounter_id)
 	_change_screen(COMBAT, {"encounter_id": encounter_id})
 
 
@@ -68,6 +69,7 @@ func _change_screen(screen_name: String, payload: Variant = null) -> void:
 		push_error("SceneLoader could not find or create the Main scene controller.")
 		return
 
+	print("SceneLoader._change_screen screen=", screen_name, " payload=", payload)
 	main_scene.change_screen(screen_name, payload)
 
 

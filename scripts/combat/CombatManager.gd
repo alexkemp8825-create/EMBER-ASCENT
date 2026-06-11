@@ -45,6 +45,7 @@ var exhaust_pile: Array[CardInstance] = []
 var _enemies: Array[EnemyInstance] = []
 var _turn_number: int = 0
 var _combat_started := false
+var _victory_allowed := false
 var _combat_log: Array[String] = []
 var _card_database := CardDatabase.new()
 var _enemy_database := EnemyDatabase.new()
@@ -67,7 +68,7 @@ func _start_combat() -> void:
 	if _combat_started:
 		return
 
-	_combat_started = true
+	_victory_allowed = false
 	encounter_title.text = "Encounter: %s" % encounter_id
 	player_title.text = _get_player_display_name()
 	hp = RunState.current_hp if RunState.current_hp > 0 else 75
@@ -80,11 +81,27 @@ func _start_combat() -> void:
 	discard_pile.clear()
 	exhaust_pile.clear()
 	_enemies = _create_enemy_encounter()
+
+	if _enemies.is_empty():
+		var fallback_enemy := _enemy_database.create_enemy("charred_rat")
+		if fallback_enemy != null:
+			_enemies.append(fallback_enemy)
+		else:
+			push_error("CRITICAL: No enemy could be created. Staying in combat screen.")
+			return
+
+	_combat_started = true
 	_selected_enemy_index = _get_first_living_enemy_index()
+
+	print("COMBAT STARTED encounter_id=", encounter_id)
+	print("ENEMIES CREATED=", _enemies.size())
 
 	_log("Combat begins.")
 	_log("Your deck is shuffled into the draw pile.")
 	_start_player_turn()
+
+	print("HAND SIZE=", hand.size())
+	_victory_allowed = true
 
 
 func _create_draw_pile() -> Array[CardInstance]:
@@ -165,7 +182,7 @@ func _on_end_turn_pressed() -> void:
 	_resolve_burn_cards_at_end_of_turn()
 	_resolve_enemy_burn_ticks()
 
-	if _are_all_enemies_defeated():
+	if _can_handle_victory():
 		_handle_victory()
 		return
 
@@ -292,7 +309,7 @@ func _play_card(card_instance: CardInstance) -> void:
 	_resolve_card_effects(card_data, target_index)
 	_move_card_from_hand_to_discard(card_instance)
 
-	if _are_all_enemies_defeated():
+	if _can_handle_victory():
 		_handle_victory()
 		return
 
@@ -485,6 +502,9 @@ func _is_defeated() -> bool:
 
 
 func _are_all_enemies_defeated() -> bool:
+	if _enemies.is_empty():
+		return false
+
 	for enemy in _enemies:
 		if enemy.is_alive():
 			return false
@@ -492,7 +512,19 @@ func _are_all_enemies_defeated() -> bool:
 	return true
 
 
+func _can_handle_victory() -> bool:
+	return (
+		_victory_allowed
+		and _combat_started
+		and _enemies.size() > 0
+		and _are_all_enemies_defeated()
+	)
+
+
 func _handle_victory() -> void:
+	if not _can_handle_victory():
+		return
+
 	RunState.current_hp = max(hp, 1)
 	_log("Victory.")
 	var reward_payload := RewardManagerScript.build_combat_reward_payload(encounter_id, RunState.current_floor)
@@ -541,7 +573,7 @@ func _apply_combat_start_relics() -> void:
 
 
 func _refresh_ui() -> void:
-	if _are_all_enemies_defeated():
+	if _can_handle_victory():
 		_handle_victory()
 		return
 

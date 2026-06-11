@@ -140,10 +140,15 @@ func enter_room(room_id: String) -> void:
 		current_floor = room.floor
 		current_node_id = room_id
 
+	print("ENTER ROOM id=", room_id, " floor=", current_floor, " (room not completed yet)")
+
 
 func complete_active_room() -> bool:
 	if active_room_id == "":
+		push_warning("complete_active_room called with no active room.")
 		return false
+
+	print("COMPLETE ACTIVE ROOM id=", active_room_id)
 
 	var completed := get_tower_state().mark_room_completed(active_room_id)
 	if completed:

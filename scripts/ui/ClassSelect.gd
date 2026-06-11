@@ -37,15 +37,12 @@ func _on_class_selected(class_id: String) -> void:
 		status_label.text = "That class is not playable yet."
 		return
 
+	SaveManager.delete_save()
 	_start_run(class_id)
-
-	if not SaveManager.save_run():
-		status_label.text = "Failed to save your run. Please try again."
-		RunState.reset_run()
-		return
 
 	var class_definition := _class_database.get_class_definition(class_id)
 	status_label.text = "%s selected. Starting first battle..." % class_definition.get("display_name", class_id)
+	print("CLASS SELECTED=", class_id, " -> begin_new_run()")
 
 	if not MapNavigatorScript.begin_new_run():
 		status_label.text = "Failed to start the run. Please try again."

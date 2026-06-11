@@ -41,6 +41,8 @@ func change_screen(screen_name: String, payload: Variant = null) -> void:
 		push_error("Unknown screen requested: %s" % screen_name)
 		return
 
+	print("Main.change_screen screen=", screen_name, " payload=", payload)
+
 	if current_screen != null:
 		current_screen.queue_free()
 		current_screen = null
