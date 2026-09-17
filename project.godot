@@ -17,6 +17,8 @@ RunState="*res://scripts/core/RunState.gd"
 SaveManager="*res://scripts/core/SaveManager.gd"
 SceneLoader="*res://scripts/core/SceneLoader.gd"
 RNG="*res://scripts/core/RNG.gd"
+ZombieVisualLibrary="*res://scripts/zombies/ZombieVisualLibrary.gd"
+ZombieDebugOverlay="*res://scripts/zombies/ZombieDebugOverlay.gd"
 
 [display]
 

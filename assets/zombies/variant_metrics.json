@@ -1,0 +1,1140 @@
+{
+  "office": {
+    "display_name": "Office",
+    "parts": {
+      "head": {
+        "bbox": [
+          88,
+          221,
+          393,
+          498
+        ],
+        "center": [
+          240.5,
+          359.5
+        ],
+        "size": [
+          306,
+          278
+        ]
+      },
+      "body": {
+        "bbox": [
+          125,
+          497,
+          362,
+          712
+        ],
+        "center": [
+          243.5,
+          604.5
+        ],
+        "size": [
+          238,
+          216
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          37,
+          500,
+          114,
+          577
+        ],
+        "center": [
+          75.5,
+          538.5
+        ],
+        "size": [
+          78,
+          78
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          370,
+          500,
+          448,
+          577
+        ],
+        "center": [
+          409.0,
+          538.5
+        ],
+        "size": [
+          79,
+          78
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          121,
+          717,
+          212,
+          796
+        ],
+        "center": [
+          166.5,
+          756.5
+        ],
+        "size": [
+          92,
+          80
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          271,
+          717,
+          362,
+          796
+        ],
+        "center": [
+          316.5,
+          756.5
+        ],
+        "size": [
+          92,
+          80
+        ]
+      }
+    },
+    "head_pivot": [
+      153.0,
+      139.0
+    ],
+    "offsets": {
+      "head_offset": [
+        0,
+        0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        0,
+        0
+      ],
+      "right_hand_offset": [
+        0,
+        0
+      ],
+      "left_foot_offset": [
+        0,
+        0
+      ],
+      "right_foot_offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "punk": {
+    "display_name": "Punk",
+    "parts": {
+      "head": {
+        "bbox": [
+          534,
+          112,
+          830,
+          498
+        ],
+        "center": [
+          682.0,
+          305.0
+        ],
+        "size": [
+          297,
+          387
+        ]
+      },
+      "body": {
+        "bbox": [
+          576,
+          497,
+          796,
+          711
+        ],
+        "center": [
+          686.0,
+          604.0
+        ],
+        "size": [
+          221,
+          215
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          484,
+          501,
+          563,
+          577
+        ],
+        "center": [
+          523.5,
+          539.0
+        ],
+        "size": [
+          80,
+          77
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          806,
+          500,
+          884,
+          577
+        ],
+        "center": [
+          845.0,
+          538.5
+        ],
+        "size": [
+          79,
+          78
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          568,
+          717,
+          660,
+          796
+        ],
+        "center": [
+          614.0,
+          756.5
+        ],
+        "size": [
+          93,
+          80
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          712,
+          717,
+          802,
+          796
+        ],
+        "center": [
+          757.0,
+          756.5
+        ],
+        "size": [
+          91,
+          80
+        ]
+      }
+    },
+    "head_pivot": [
+      148.0,
+      193.5
+    ],
+    "offsets": {
+      "head_offset": [
+        -1.0,
+        -54.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        0,
+        0
+      ],
+      "right_hand_offset": [
+        0,
+        0
+      ],
+      "left_foot_offset": [
+        0,
+        0
+      ],
+      "right_foot_offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "nurse": {
+    "display_name": "Nurse",
+    "parts": {
+      "head": {
+        "bbox": [
+          946,
+          200,
+          1233,
+          498
+        ],
+        "center": [
+          1089.5,
+          349.0
+        ],
+        "size": [
+          288,
+          299
+        ]
+      },
+      "body": {
+        "bbox": [
+          990,
+          497,
+          1208,
+          711
+        ],
+        "center": [
+          1099.0,
+          604.0
+        ],
+        "size": [
+          219,
+          215
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          905,
+          500,
+          982,
+          576
+        ],
+        "center": [
+          943.5,
+          538.0
+        ],
+        "size": [
+          78,
+          77
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          1219,
+          500,
+          1296,
+          577
+        ],
+        "center": [
+          1257.5,
+          538.5
+        ],
+        "size": [
+          78,
+          78
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          982,
+          717,
+          1072,
+          796
+        ],
+        "center": [
+          1027.0,
+          756.5
+        ],
+        "size": [
+          91,
+          80
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          1122,
+          717,
+          1211,
+          796
+        ],
+        "center": [
+          1166.5,
+          756.5
+        ],
+        "size": [
+          90,
+          80
+        ]
+      }
+    },
+    "head_pivot": [
+      144.0,
+      149.5
+    ],
+    "offsets": {
+      "head_offset": [
+        -6.5,
+        -10.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        12.5,
+        0.0
+      ],
+      "right_hand_offset": [
+        0,
+        0
+      ],
+      "left_foot_offset": [
+        0,
+        0
+      ],
+      "right_foot_offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "forest": {
+    "display_name": "Forest",
+    "parts": {
+      "head": {
+        "bbox": [
+          1393,
+          128,
+          1696,
+          498
+        ],
+        "center": [
+          1544.5,
+          313.0
+        ],
+        "size": [
+          304,
+          371
+        ]
+      },
+      "body": {
+        "bbox": [
+          1426,
+          497,
+          1653,
+          711
+        ],
+        "center": [
+          1539.5,
+          604.0
+        ],
+        "size": [
+          228,
+          215
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          1336,
+          500,
+          1413,
+          576
+        ],
+        "center": [
+          1374.5,
+          538.0
+        ],
+        "size": [
+          78,
+          77
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          1661,
+          500,
+          1739,
+          576
+        ],
+        "center": [
+          1700.0,
+          538.0
+        ],
+        "size": [
+          79,
+          77
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          1422,
+          717,
+          1513,
+          796
+        ],
+        "center": [
+          1467.5,
+          756.5
+        ],
+        "size": [
+          92,
+          80
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          1568,
+          717,
+          1658,
+          796
+        ],
+        "center": [
+          1613.0,
+          756.5
+        ],
+        "size": [
+          91,
+          80
+        ]
+      }
+    },
+    "head_pivot": [
+      151.5,
+      185.0
+    ],
+    "offsets": {
+      "head_offset": [
+        8.0,
+        -46.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        0,
+        0
+      ],
+      "right_hand_offset": [
+        0,
+        0
+      ],
+      "left_foot_offset": [
+        0,
+        0
+      ],
+      "right_foot_offset": [
+        0,
+        0
+      ]
+    }
+  },
+  "pirate": {
+    "display_name": "Pirate",
+    "parts": {
+      "head": {
+        "bbox": [
+          39,
+          199,
+          418,
+          518
+        ],
+        "center": [
+          228.5,
+          358.5
+        ],
+        "size": [
+          380,
+          320
+        ]
+      },
+      "body": {
+        "bbox": [
+          148,
+          517,
+          385,
+          728
+        ],
+        "center": [
+          266.5,
+          622.5
+        ],
+        "size": [
+          238,
+          212
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          78,
+          525,
+          150,
+          599
+        ],
+        "center": [
+          114.0,
+          562.0
+        ],
+        "size": [
+          73,
+          75
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          384,
+          525,
+          457,
+          599
+        ],
+        "center": [
+          420.5,
+          562.0
+        ],
+        "size": [
+          74,
+          75
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          147,
+          740,
+          239,
+          828
+        ],
+        "center": [
+          193.0,
+          784.0
+        ],
+        "size": [
+          93,
+          89
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          292,
+          740,
+          385,
+          828
+        ],
+        "center": [
+          338.5,
+          784.0
+        ],
+        "size": [
+          94,
+          89
+        ]
+      }
+    },
+    "head_pivot": [
+      190.0,
+      159.5
+    ],
+    "offsets": {
+      "head_offset": [
+        -35.0,
+        -19.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        15.5,
+        5.5
+      ],
+      "right_hand_offset": [
+        -11.5,
+        5.5
+      ],
+      "left_foot_offset": [
+        3.5,
+        9.5
+      ],
+      "right_foot_offset": [
+        -1.0,
+        9.5
+      ]
+    }
+  },
+  "chef": {
+    "display_name": "Chef",
+    "parts": {
+      "head": {
+        "bbox": [
+          518,
+          111,
+          827,
+          518
+        ],
+        "center": [
+          672.5,
+          314.5
+        ],
+        "size": [
+          310,
+          408
+        ]
+      },
+      "body": {
+        "bbox": [
+          558,
+          517,
+          791,
+          728
+        ],
+        "center": [
+          674.5,
+          622.5
+        ],
+        "size": [
+          234,
+          212
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          488,
+          525,
+          560,
+          599
+        ],
+        "center": [
+          524.0,
+          562.0
+        ],
+        "size": [
+          73,
+          75
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          790,
+          525,
+          863,
+          599
+        ],
+        "center": [
+          826.5,
+          562.0
+        ],
+        "size": [
+          74,
+          75
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          556,
+          740,
+          647,
+          828
+        ],
+        "center": [
+          601.5,
+          784.0
+        ],
+        "size": [
+          92,
+          89
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          700,
+          740,
+          792,
+          828
+        ],
+        "center": [
+          746.0,
+          784.0
+        ],
+        "size": [
+          93,
+          89
+        ]
+      }
+    },
+    "head_pivot": [
+      154.0,
+      204.0
+    ],
+    "offsets": {
+      "head_offset": [
+        1.0,
+        -63.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        17.5,
+        5.5
+      ],
+      "right_hand_offset": [
+        -13.5,
+        5.5
+      ],
+      "left_foot_offset": [
+        4.0,
+        9.5
+      ],
+      "right_foot_offset": [
+        -1.5,
+        9.5
+      ]
+    }
+  },
+  "builder": {
+    "display_name": "Builder",
+    "parts": {
+      "head": {
+        "bbox": [
+          920,
+          155,
+          1248,
+          518
+        ],
+        "center": [
+          1084.0,
+          336.5
+        ],
+        "size": [
+          329,
+          364
+        ]
+      },
+      "body": {
+        "bbox": [
+          965,
+          517,
+          1196,
+          728
+        ],
+        "center": [
+          1080.5,
+          622.5
+        ],
+        "size": [
+          232,
+          212
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          894,
+          525,
+          967,
+          599
+        ],
+        "center": [
+          930.5,
+          562.0
+        ],
+        "size": [
+          74,
+          75
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          1194,
+          525,
+          1268,
+          599
+        ],
+        "center": [
+          1231.0,
+          562.0
+        ],
+        "size": [
+          75,
+          75
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          961,
+          740,
+          1053,
+          828
+        ],
+        "center": [
+          1007.0,
+          784.0
+        ],
+        "size": [
+          93,
+          89
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          1104,
+          740,
+          1196,
+          828
+        ],
+        "center": [
+          1150.0,
+          784.0
+        ],
+        "size": [
+          93,
+          89
+        ]
+      }
+    },
+    "head_pivot": [
+      164.0,
+      182.0
+    ],
+    "offsets": {
+      "head_offset": [
+        6.5,
+        -41.0
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        18.0,
+        5.5
+      ],
+      "right_hand_offset": [
+        -15.0,
+        5.5
+      ],
+      "left_foot_offset": [
+        3.5,
+        9.5
+      ],
+      "right_foot_offset": [
+        -3.5,
+        9.5
+      ]
+    }
+  },
+  "sleeping": {
+    "display_name": "Sleeping",
+    "parts": {
+      "head": {
+        "bbox": [
+          1346,
+          166,
+          1735,
+          518
+        ],
+        "center": [
+          1540.5,
+          342.0
+        ],
+        "size": [
+          390,
+          353
+        ]
+      },
+      "body": {
+        "bbox": [
+          1369,
+          517,
+          1604,
+          728
+        ],
+        "center": [
+          1486.5,
+          622.5
+        ],
+        "size": [
+          236,
+          212
+        ]
+      },
+      "left_hand": {
+        "bbox": [
+          1298,
+          525,
+          1371,
+          599
+        ],
+        "center": [
+          1334.5,
+          562.0
+        ],
+        "size": [
+          74,
+          75
+        ]
+      },
+      "right_hand": {
+        "bbox": [
+          1603,
+          525,
+          1677,
+          599
+        ],
+        "center": [
+          1640.0,
+          562.0
+        ],
+        "size": [
+          75,
+          75
+        ]
+      },
+      "left_foot": {
+        "bbox": [
+          1369,
+          740,
+          1460,
+          828
+        ],
+        "center": [
+          1414.5,
+          784.0
+        ],
+        "size": [
+          92,
+          89
+        ]
+      },
+      "right_foot": {
+        "bbox": [
+          1511,
+          740,
+          1603,
+          828
+        ],
+        "center": [
+          1557.0,
+          784.0
+        ],
+        "size": [
+          93,
+          89
+        ]
+      }
+    },
+    "head_pivot": [
+      195.0,
+      176.5
+    ],
+    "offsets": {
+      "head_offset": [
+        57.0,
+        -35.5
+      ],
+      "head_scale": [
+        1.0,
+        1.0
+      ],
+      "accessory_offset": [
+        0,
+        0
+      ],
+      "body_offset": [
+        0,
+        0
+      ],
+      "left_hand_offset": [
+        16.0,
+        5.5
+      ],
+      "right_hand_offset": [
+        -12.0,
+        5.5
+      ],
+      "left_foot_offset": [
+        5.0,
+        9.5
+      ],
+      "right_foot_offset": [
+        -2.5,
+        9.5
+      ]
+    }
+  },
+  "_skeleton": {
+    "head": [
+      -3.0,
+      -245.0
+    ],
+    "body": [
+      0.0,
+      0.0
+    ],
+    "left_hand": [
+      -168.0,
+      -66.0
+    ],
+    "right_hand": [
+      165.5,
+      -66.0
+    ],
+    "left_foot": [
+      -77.0,
+      152.0
+    ],
+    "right_foot": [
+      73.0,
+      152.0
+    ]
+  }
+}
