@@ -81,6 +81,7 @@ static func _generate_act(tower_state: TowerState, seed_value: int, act: int) ->
 
 	tower_state.current_room_id = entrance.room_id
 	tower_state.highest_floor = FLOOR_BOSS
+	event_database.free()
 
 
 static func _create_branch_room(

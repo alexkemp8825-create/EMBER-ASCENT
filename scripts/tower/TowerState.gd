@@ -183,6 +183,7 @@ func _apply_room_metadata(room: TowerRoomData) -> void:
 		var event_data := event_database.get_event(room.source_card_id)
 		if event_data != null:
 			room.display_name = event_data.title
+		event_database.free()
 		return
 
 	if room.room_type == TowerRoomDatabaseScript.ROOM_ELITE:
@@ -190,6 +191,7 @@ func _apply_room_metadata(room: TowerRoomData) -> void:
 		var enemy_data := enemy_database.get_enemy(room.source_card_id)
 		if enemy_data != null:
 			room.display_name = "Elite: %s" % enemy_data.display_name
+		enemy_database.free()
 
 
 func _generate_room_id(room_type: String) -> String:
