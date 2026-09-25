@@ -1,6 +1,6 @@
 extends PanelContainer
 
-const SCOUT_GOLD := 18
+const RunActionsScript := preload("res://scripts/core/RunActions.gd")
 
 @onready var subtitle_label: Label = %SubtitleLabel
 @onready var scout_button: Button = %ScoutButton
@@ -19,10 +19,10 @@ func _on_scout_pressed() -> void:
 	if _scouted:
 		return
 
-	RunState.add_gold(SCOUT_GOLD)
+	var scout_gold := RunActionsScript.scout()
 	_scouted = true
 	scout_button.disabled = true
-	subtitle_label.text = "You chart hidden caches. +%d Gold." % SCOUT_GOLD
+	subtitle_label.text = "You chart hidden caches. +%d Gold." % scout_gold
 
 
 func _on_continue_pressed() -> void:

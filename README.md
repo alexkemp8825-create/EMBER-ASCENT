@@ -30,6 +30,21 @@ The main scene is `scenes/main/Main.tscn`.
 
 Use **Abandon Run** on the map to return to the main menu at any time.
 
+## Balance Simulator
+
+The main menu has **Balance Sim (100 runs)** while debug mode is on (the default). It plays 100 full climbs with the heuristic policy: both 5-floor acts, real combat, rewards, shops, events, and the Act 2 boss. The same batch can be run headless:
+
+```bash
+godot --headless --import --path . --quit
+godot --headless --path . res://scenes/dev/BalanceSimulator.tscn -- --runs 100 --seed 1 --policy heuristic --class ash_knight
+```
+
+`--policy` is `heuristic` (default), `random`, or `compare` (both, same seeds). `--class` is `ash_knight` or `cinder_witch`. Run `i` uses seed `base + i * 104729`.
+
+Reports are printed to the console and written to `res://reports/latest.md` (plus `.json` and `.csv`) and `user://balance_reports/`. The markdown summary includes completion rate, death floors, run length, encounter size, reward picks, gold, carryover, and boss win rate. Raise, Souls, hordes, corpses, and reserves are not systems in this game; the report says so instead of inventing them.
+
+Details: [docs/balance-simulator.md](docs/balance-simulator.md).
+
 ## Project Structure
 
 ```

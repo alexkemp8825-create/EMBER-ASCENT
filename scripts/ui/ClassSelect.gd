@@ -37,8 +37,9 @@ func _on_class_selected(class_id: String) -> void:
 		status_label.text = "That class is not playable yet."
 		return
 
-	SaveManager.delete_save()
-	_start_run(class_id)
+	if not RunState.start_class_run(class_id):
+		status_label.text = "Failed to start the run. Please try again."
+		return
 
 	var class_definition := _class_database.get_class_definition(class_id)
 	status_label.text = "%s selected. Starting first battle..." % class_definition.get("display_name", class_id)
@@ -48,29 +49,3 @@ func _on_class_selected(class_id: String) -> void:
 		status_label.text = "Failed to start the run. Please try again."
 		RunState.reset_run()
 		return
-
-
-func _start_run(class_id: String) -> void:
-	var class_definition := _class_database.get_class_definition(class_id)
-	if class_definition.is_empty():
-		push_error("Unknown class requested: %s" % class_id)
-		return
-
-	RunState.reset_run()
-	RunState.selected_class = class_id
-	RunState.max_hp = int(class_definition.get("max_hp", 0))
-	RunState.current_hp = RunState.max_hp
-	RunState.gold = int(class_definition.get("starting_gold", 0))
-	RunState.current_act = 1
-	RunState.run_seed = int(Time.get_unix_time_from_system())
-
-	RunState.deck.clear()
-	for card_id in class_definition.get("starter_deck", []):
-		RunState.deck.append(str(card_id))
-
-	RunState.relics.clear()
-	RunState.relics.append(str(class_definition.get("starter_relic", "")))
-
-	RNG.set_seed(RunState.run_seed)
-	RunState.create_new_tower()
-	RunState.completed_nodes.clear()

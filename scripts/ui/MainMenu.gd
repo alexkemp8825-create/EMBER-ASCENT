@@ -1,11 +1,15 @@
 extends PanelContainer
 
+const BalanceRunSimulatorScript := preload("res://scripts/dev/BalanceRunSimulator.gd")
+
 @onready var subtitle_label: Label = %Subtitle
 @onready var new_run_button: Button = %NewRunButton
 @onready var continue_button: Button = %ContinueRunButton
 @onready var quit_button: Button = %QuitButton
 @onready var version_label: Label = %VersionLabel
 @onready var status_label: Label = %StatusLabel
+
+var _balance_button: Button
 
 
 func _ready() -> void:
@@ -17,6 +21,7 @@ func _ready() -> void:
 	continue_button.pressed.connect(_on_continue_pressed)
 	quit_button.pressed.connect(_on_quit_pressed)
 	_refresh_continue_button()
+	_add_balance_button()
 
 
 func _refresh_continue_button() -> void:
@@ -53,3 +58,31 @@ func _on_continue_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit()
+
+
+func _add_balance_button() -> void:
+	if not GameState.debug_mode:
+		return
+
+	var content := $MarginContainer/Content
+	_balance_button = Button.new()
+	_balance_button.text = "Balance Sim (100 runs)"
+	_balance_button.tooltip_text = "Runs 100 seeded full climbs with the heuristic policy and writes a balance report."
+	_balance_button.custom_minimum_size = Vector2(320, 56)
+	_balance_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	content.add_child(_balance_button)
+	content.move_child(_balance_button, quit_button.get_index() + 1)
+	_balance_button.pressed.connect(_on_balance_sim_pressed)
+
+
+func _on_balance_sim_pressed() -> void:
+	if _balance_button != null:
+		_balance_button.disabled = true
+	status_label.text = "Running 100 seeded runs..."
+	await get_tree().process_frame
+	var simulator = BalanceRunSimulatorScript.new()
+	var result: Dictionary = simulator.run(BalanceRunSimulatorScript.default_config())
+	status_label.text = str(result.get("status_line", "Balance sim finished."))
+	if _balance_button != null:
+		_balance_button.disabled = false
+	_refresh_continue_button()

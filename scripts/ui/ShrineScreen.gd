@@ -1,13 +1,12 @@
 extends PanelContainer
 
-const RelicDatabaseScript := preload("res://scripts/relics/RelicDatabase.gd")
+const RunActionsScript := preload("res://scripts/core/RunActions.gd")
 
 @onready var subtitle_label: Label = %SubtitleLabel
 @onready var pray_button: Button = %PrayButton
 @onready var continue_button: Button = %ContinueButton
 
 var _prayed := false
-var _relic_database := RelicDatabaseScript.new()
 
 
 func _ready() -> void:
@@ -20,18 +19,15 @@ func _on_pray_pressed() -> void:
 	if _prayed:
 		return
 
-	var heal_amount := int(ceil(float(RunState.max_hp) * 0.4))
-	RunState.current_hp = min(RunState.current_hp + heal_amount, RunState.max_hp)
-
-	var relic_choices := _relic_database.get_boss_reward_choices(1, RunState.relics)
-	if relic_choices.is_empty():
+	var result := RunActionsScript.pray()
+	var heal_amount := int(result.get("heal_amount", 0))
+	var relic_name := str(result.get("relic_name", ""))
+	if relic_name == "":
 		subtitle_label.text = "The shrine restores %d HP." % heal_amount
 	else:
-		var relic_data: RelicData = relic_choices[0]
-		RunState.add_relic(relic_data.id)
 		subtitle_label.text = "The shrine restores %d HP and grants %s." % [
 			heal_amount,
-			relic_data.display_name,
+			relic_name,
 		]
 
 	_prayed = true

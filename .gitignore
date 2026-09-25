@@ -3,3 +3,6 @@
 export.cfg
 export_presets.cfg
 *.translation
+*.uid
+reports/*
+!reports/.gitkeep

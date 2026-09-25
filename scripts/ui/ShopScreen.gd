@@ -129,25 +129,13 @@ func _build_remove_card_service() -> void:
 
 
 func _on_card_buy_pressed(offer_index: int, buy_button: Button) -> void:
-	var card_offers: Array = _inventory.get("card_offers", [])
-	if offer_index < 0 or offer_index >= card_offers.size():
+	var result := ShopManagerScript.try_buy_card(_inventory, offer_index)
+	if not bool(result.get("ok", false)):
+		if str(result.get("reason", "")) == "gold":
+			subtitle_label.text = "Not enough gold for that card."
 		return
 
-	var offer: Dictionary = card_offers[offer_index]
-	if bool(offer.get("sold", false)):
-		return
-
-	var price := int(offer.get("price", 0))
-	if not RunState.spend_gold(price):
-		subtitle_label.text = "Not enough gold for that card."
-		return
-
-	RunState.add_card_to_deck(str(offer.get("card_id", "")))
-	offer["sold"] = true
-	card_offers[offer_index] = offer
-	_inventory["card_offers"] = card_offers
-
-	var card_data := _card_database.get_card(str(offer.get("card_id", "")))
+	var card_data := _card_database.get_card(str(result.get("card_id", "")))
 	subtitle_label.text = "Purchased %s." % card_data.display_name if card_data != null else "Card purchased."
 	buy_button.disabled = true
 	buy_button.text = "Sold"
@@ -155,36 +143,27 @@ func _on_card_buy_pressed(offer_index: int, buy_button: Button) -> void:
 
 
 func _on_relic_buy_pressed(relic_button: Button) -> void:
-	var relic_offer: Dictionary = _inventory.get("relic_offer", {})
-	if relic_offer.is_empty() or bool(relic_offer.get("sold", false)):
+	var result := ShopManagerScript.try_buy_relic(_inventory)
+	if not bool(result.get("ok", false)):
+		if str(result.get("reason", "")) == "gold":
+			subtitle_label.text = "Not enough gold for that relic."
 		return
 
-	var price := int(relic_offer.get("price", 0))
-	if not RunState.spend_gold(price):
-		subtitle_label.text = "Not enough gold for that relic."
-		return
-
-	var relic_id := str(relic_offer.get("relic_id", ""))
-	RunState.add_relic(relic_id)
-	relic_offer["sold"] = true
-	_inventory["relic_offer"] = relic_offer
-
-	var relic_data := _relic_database.get_relic(relic_id)
+	var relic_data := _relic_database.get_relic(str(result.get("relic_id", "")))
 	subtitle_label.text = "Purchased %s." % relic_data.display_name if relic_data != null else "Relic purchased."
 	relic_button.disabled = true
 	relic_button.text = "Sold"
 	_refresh_gold_label()
 
 
-func _on_remove_card_pressed(card_id: String, remove_button: Button) -> void:
-	var remove_price := int(_inventory.get("remove_card_price", 0))
-	if not RunState.spend_gold(remove_price):
-		subtitle_label.text = "Not enough gold to remove a card."
-		return
-
-	if not RunState.remove_card_from_deck(card_id):
-		RunState.add_gold(remove_price)
-		subtitle_label.text = "That card can no longer be removed."
+func _on_remove_card_pressed(card_id: String, _remove_button: Button) -> void:
+	var result := ShopManagerScript.try_remove_card(_inventory, card_id)
+	if not bool(result.get("ok", false)):
+		var reason := str(result.get("reason", ""))
+		if reason == "gold":
+			subtitle_label.text = "Not enough gold to remove a card."
+		elif reason == "remove":
+			subtitle_label.text = "That card can no longer be removed."
 		return
 
 	var card_data := _card_database.get_card(card_id)

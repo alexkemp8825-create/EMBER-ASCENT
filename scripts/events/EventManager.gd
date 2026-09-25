@@ -4,6 +4,17 @@ extends RefCounted
 const CardDatabaseScript := preload("res://scripts/cards/CardDatabase.gd")
 
 
+static func can_select_choice(event_data: EventData, choice_id: String) -> bool:
+	if event_data == null:
+		return false
+
+	var choice := event_data.get_choice(choice_id)
+	if choice.is_empty():
+		return false
+
+	return _can_afford_choice(choice)
+
+
 static func apply_choice(event_data: EventData, choice_id: String) -> Dictionary:
 	if event_data == null:
 		return _result(false, "Unknown event.")
