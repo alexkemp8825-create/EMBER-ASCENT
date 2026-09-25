@@ -2,8 +2,8 @@ class_name MapNavigator
 extends RefCounted
 
 const TowerRoomDatabaseScript := preload("res://scripts/tower/TowerRoomDatabase.gd")
-const TowerGeneratorScript := preload("res://scripts/tower/TowerGenerator.gd")
 const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
+const EncounterScalerScript := preload("res://scripts/combat/hex/EncounterScaler.gd")
 
 
 static func travel_to_room(room: TowerRoomData) -> void:
@@ -81,26 +81,8 @@ static func get_elite_encounter_id(room: TowerRoomData) -> String:
 	if room.source_card_id != "":
 		return room.source_card_id
 
-	if RunState.current_act >= 2:
-		return "cinder_colossus"
-
-	return "ember_warden"
+	return EncounterScalerScript.signature_encounter_id(room.floor, RunState.current_act, "elite")
 
 
 static func get_battle_encounter_id(floor: int) -> String:
-	if RunState.current_act >= 2:
-		if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
-			return "ash_zealot"
-
-		if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
-			return "furnace_hound"
-
-		return "molten_guard"
-
-	if floor >= TowerGeneratorScript.FLOOR_CONVERGENCE_BATTLE:
-		return "molten_guard"
-
-	if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
-		return "charred_rat"
-
-	return "furnace_cultist"
+	return EncounterScalerScript.signature_encounter_id(floor, RunState.current_act, "battle")

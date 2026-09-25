@@ -18,8 +18,11 @@ const PLACEHOLDER_STARTER_DECK := [
 const CARD_VIEW_SCENE := preload("res://scenes/ui/CardView.tscn")
 const ENEMY_VIEW_SCENE := preload("res://scenes/combat/EnemyView.tscn")
 const RewardManagerScript := preload("res://scripts/rewards/RewardManager.gd")
+const EncounterDirectorScript := preload("res://scripts/combat/hex/EncounterDirector.gd")
+const EncounterScalerScript := preload("res://scripts/combat/hex/EncounterScaler.gd")
 
 @onready var encounter_title: Label = %EncounterTitle
+@onready var hex_brief_label: Label = %HexBrief
 @onready var player_title: Label = %PlayerTitle
 @onready var enemies_container: VBoxContainer = %EnemiesContainer
 @onready var player_stats_label: Label = %PlayerStatsLabel
@@ -43,6 +46,7 @@ var discard_pile: Array[CardInstance] = []
 var exhaust_pile: Array[CardInstance] = []
 
 var _enemies: Array[EnemyInstance] = []
+var _hex_battle: HexBattle = null
 var _turn_number: int = 0
 var _combat_started := false
 var _victory_allowed := false
@@ -69,7 +73,13 @@ func _start_combat() -> void:
 		return
 
 	_victory_allowed = false
-	encounter_title.text = "Encounter: %s" % encounter_id
+	_hex_battle = _resolve_hex_battle()
+	if _hex_battle != null:
+		encounter_title.text = "%s — %s" % [_hex_battle.template_name, _hex_battle.objective_label]
+		hex_brief_label.text = _hex_battle.briefing()
+	else:
+		encounter_title.text = "Encounter: %s" % encounter_id
+		hex_brief_label.text = ""
 	player_title.text = _get_player_display_name()
 	hp = RunState.current_hp if RunState.current_hp > 0 else 75
 	block = 0
@@ -97,6 +107,8 @@ func _start_combat() -> void:
 	_selected_enemy_index = _get_first_living_enemy_index()
 
 	_log("Combat begins.")
+	if _hex_battle != null:
+		_log(_hex_battle.briefing())
 	_log("Your deck is shuffled into the draw pile.")
 	_start_player_turn()
 
@@ -121,6 +133,9 @@ func _create_draw_pile() -> Array[CardInstance]:
 
 
 func _create_enemy_encounter() -> Array[EnemyInstance]:
+	if _hex_battle != null:
+		return _create_enemies_from_hex_battle(_hex_battle)
+
 	var enemy_ids := _get_enemy_ids_for_current_encounter()
 	var enemies: Array[EnemyInstance] = []
 
@@ -129,6 +144,35 @@ func _create_enemy_encounter() -> Array[EnemyInstance]:
 		if enemy != null:
 			enemies.append(enemy)
 
+	return enemies
+
+
+func _resolve_hex_battle() -> HexBattle:
+	if RunState.active_room_id == "":
+		return null
+
+	var room := RunState.get_tower_state().get_room(RunState.active_room_id)
+	if room == null:
+		return null
+	if EncounterDirectorScript.role_for_room_type(room.room_type) == "":
+		return null
+
+	var run_seed := RunState.run_seed
+	if run_seed == 0 and RunState.tower_state != null:
+		run_seed = RunState.tower_state.tower_seed
+	return EncounterDirectorScript.build_for_room(run_seed, room, RunState.current_act)
+
+
+func _create_enemies_from_hex_battle(battle: HexBattle) -> Array[EnemyInstance]:
+	var enemies: Array[EnemyInstance] = []
+	for spawn in battle.enemies:
+		var enemy := _enemy_database.create_enemy(str(spawn.get("id", "")))
+		if enemy == null:
+			continue
+		var scaled_hp := EncounterScalerScript.scale_card_hp(enemy.max_hp, battle.floor, battle.act)
+		enemy.max_hp = scaled_hp
+		enemy.hp = scaled_hp
+		enemies.append(enemy)
 	return enemies
 
 
