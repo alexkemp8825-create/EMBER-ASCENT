@@ -22,6 +22,37 @@ var active_room_id: String = ""
 var _show_act_transition_message: bool = false
 
 
+func start_class_run(class_id: String, seed_value: int = -1) -> bool:
+	var class_database := ClassDatabase.new()
+	var playable := class_database.is_playable(class_id)
+	var class_definition := class_database.get_class_definition(class_id)
+	class_database.free()
+	if not playable or class_definition.is_empty():
+		push_error("Unknown class requested: %s" % class_id)
+		return false
+
+	SaveManager.delete_save()
+	reset_run()
+	selected_class = class_id
+	max_hp = int(class_definition.get("max_hp", 0))
+	current_hp = max_hp
+	gold = int(class_definition.get("starting_gold", 0))
+	current_act = 1
+	run_seed = seed_value if seed_value >= 0 else int(Time.get_unix_time_from_system())
+
+	deck.clear()
+	for card_id in class_definition.get("starter_deck", []):
+		deck.append(str(card_id))
+
+	relics.clear()
+	relics.append(str(class_definition.get("starter_relic", "")))
+
+	RNG.set_seed(run_seed)
+	create_new_tower()
+	completed_nodes.clear()
+	return true
+
+
 func reset_run() -> void:
 	selected_class = ""
 	max_hp = 0
@@ -140,7 +171,8 @@ func enter_room(room_id: String) -> void:
 		current_floor = room.floor
 		current_node_id = room_id
 
-	print("ENTER ROOM id=", room_id, " floor=", current_floor, " (room not completed yet)")
+	if not GameState.simulation_quiet:
+		print("ENTER ROOM id=", room_id, " floor=", current_floor, " (room not completed yet)")
 
 
 func complete_active_room() -> bool:
@@ -148,7 +180,8 @@ func complete_active_room() -> bool:
 		push_warning("complete_active_room called with no active room.")
 		return false
 
-	print("COMPLETE ACTIVE ROOM id=", active_room_id)
+	if not GameState.simulation_quiet:
+		print("COMPLETE ACTIVE ROOM id=", active_room_id)
 
 	var completed := get_tower_state().mark_room_completed(active_room_id)
 	if completed:

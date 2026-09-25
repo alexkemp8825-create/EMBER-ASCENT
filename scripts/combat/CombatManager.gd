@@ -51,6 +51,10 @@ var _card_database := CardDatabase.new()
 var _enemy_database := EnemyDatabase.new()
 var _selected_enemy_index: int = 0
 var _temporary_strength: int = 0
+var headless := false
+var combat_outcome := ""
+var defeat_cause := ""
+var pending_reward_payload: Dictionary = {}
 
 
 func _ready() -> void:
@@ -69,8 +73,12 @@ func _start_combat() -> void:
 		return
 
 	_victory_allowed = false
-	encounter_title.text = "Encounter: %s" % encounter_id
-	player_title.text = _get_player_display_name()
+	combat_outcome = ""
+	defeat_cause = ""
+	pending_reward_payload = {}
+	if _ui_ready():
+		encounter_title.text = "Encounter: %s" % encounter_id
+		player_title.text = _get_player_display_name()
 	hp = RunState.current_hp if RunState.current_hp > 0 else 75
 	block = 0
 	energy = STARTING_ENERGY
@@ -88,9 +96,10 @@ func _start_combat() -> void:
 		if fallback_enemy != null:
 			_enemies.append(fallback_enemy)
 		else:
-			end_turn_button.disabled = true
 			_log("ERROR: No enemy could be created. Combat cannot continue.")
-			_refresh_ui()
+			if _ui_ready():
+				end_turn_button.disabled = true
+				_refresh_ui()
 			return
 
 	_combat_started = true
@@ -100,10 +109,11 @@ func _start_combat() -> void:
 	_log("Your deck is shuffled into the draw pile.")
 	_start_player_turn()
 
-	print("COMBAT START encounter_id=", encounter_id)
-	print("ENEMIES SIZE=", _enemies.size())
-	print("DRAW PILE SIZE=", draw_pile.size())
-	print("HAND SIZE=", hand.size())
+	if not GameState.simulation_quiet:
+		print("COMBAT START encounter_id=", encounter_id)
+		print("ENEMIES SIZE=", _enemies.size())
+		print("DRAW PILE SIZE=", draw_pile.size())
+		print("HAND SIZE=", hand.size())
 	_victory_allowed = true
 
 
@@ -252,6 +262,8 @@ func _resolve_enemy_attack(enemy: EnemyInstance, amount: int) -> void:
 	var damage: int = total_amount - blocked_damage
 	block -= blocked_damage
 	hp -= damage
+	if hp <= 0 and defeat_cause == "":
+		defeat_cause = "enemy_attack:%s" % enemy.enemy_id
 	_log("%s attacks for %d. Block absorbs %d. You take %d damage." % [
 		enemy.display_name,
 		total_amount,
@@ -462,6 +474,8 @@ func _resolve_burn_cards_at_end_of_turn() -> void:
 	for card_instance in hand:
 		if card_instance.card_id == "burn":
 			hp -= 2
+			if hp <= 0 and defeat_cause == "":
+				defeat_cause = "status_burn"
 			exhaust_pile.append(card_instance)
 			_log("Burn sears you for 2 damage, then exhausts.")
 		else:
@@ -516,14 +530,30 @@ func _are_all_enemies_defeated() -> bool:
 
 
 func _handle_victory() -> void:
+	if combat_outcome != "":
+		return
+
+	combat_outcome = "victory"
 	RunState.current_hp = max(hp, 1)
 	_log("Victory.")
-	var reward_payload := RewardManagerScript.build_combat_reward_payload(encounter_id, RunState.current_floor)
-	SceneLoader.change_to_rewards(reward_payload)
+	pending_reward_payload = RewardManagerScript.build_combat_reward_payload(encounter_id, RunState.current_floor)
+	if headless:
+		return
+
+	SceneLoader.change_to_rewards(pending_reward_payload)
 
 
 func _handle_defeat() -> void:
+	if combat_outcome != "":
+		return
+
+	combat_outcome = "defeat"
+	if defeat_cause == "":
+		defeat_cause = "unknown"
 	_log("Defeat.")
+	if not _ui_ready():
+		return
+
 	end_turn_button.disabled = true
 	defeat_message_label.text = "Your embers fade in the tower's silence."
 	defeat_panel.visible = true
@@ -566,6 +596,9 @@ func _apply_combat_start_relics() -> void:
 func _refresh_ui() -> void:
 	if _victory_allowed and _are_all_enemies_defeated():
 		_handle_victory()
+		return
+
+	if not _ui_ready():
 		return
 
 	player_stats_label.text = "HP: %d/%d\nBlock: %d\nEnergy: %d/%d\nStrength: %d" % [
@@ -638,5 +671,67 @@ func _log(message: String) -> void:
 	if _combat_log.size() > 12:
 		_combat_log.pop_front()
 
-	if is_node_ready():
+	if _ui_ready():
 		_refresh_log()
+
+
+func _ui_ready() -> bool:
+	return not headless and is_node_ready()
+
+
+func begin_headless(p_encounter_id: String) -> void:
+	headless = true
+	encounter_id = p_encounter_id
+	_start_combat()
+
+
+func play_card(card_instance: CardInstance) -> void:
+	if combat_outcome != "":
+		return
+
+	_play_card(card_instance)
+
+
+func end_player_turn() -> void:
+	if combat_outcome != "":
+		return
+
+	_on_end_turn_pressed()
+
+
+func get_turn_number() -> int:
+	return _turn_number
+
+
+func get_enemy_count() -> int:
+	return _enemies.size()
+
+
+func get_living_enemies() -> Array[EnemyInstance]:
+	var living: Array[EnemyInstance] = []
+	for enemy in _enemies:
+		if enemy.is_alive():
+			living.append(enemy)
+	return living
+
+
+func focus_lowest_hp_enemy() -> void:
+	var best_index := -1
+	var best_hp := 999999
+	for enemy_index in range(_enemies.size()):
+		if not _is_living_enemy_index(enemy_index):
+			continue
+		if _enemies[enemy_index].hp < best_hp:
+			best_hp = _enemies[enemy_index].hp
+			best_index = enemy_index
+	if best_index >= 0:
+		_selected_enemy_index = best_index
+
+
+func cleanup_headless() -> void:
+	if not headless:
+		return
+	if is_instance_valid(_card_database):
+		_card_database.free()
+	if is_instance_valid(_enemy_database):
+		_enemy_database.free()

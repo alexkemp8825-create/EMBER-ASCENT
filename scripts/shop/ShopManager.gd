@@ -69,3 +69,52 @@ static func get_relic_price(relic_data: RelicData, floor: int, act: int) -> int:
 
 static func get_remove_card_price(floor: int, act: int) -> int:
 	return REMOVE_CARD_BASE_PRICE + (floor * 10) + ((act - 1) * 20)
+
+
+static func try_buy_card(inventory: Dictionary, offer_index: int) -> Dictionary:
+	var card_offers: Array = inventory.get("card_offers", [])
+	if offer_index < 0 or offer_index >= card_offers.size():
+		return {"ok": false, "reason": "missing"}
+
+	var offer: Dictionary = card_offers[offer_index]
+	if bool(offer.get("sold", false)):
+		return {"ok": false, "reason": "sold"}
+
+	var price := int(offer.get("price", 0))
+	if not RunState.spend_gold(price):
+		return {"ok": false, "reason": "gold"}
+
+	var card_id := str(offer.get("card_id", ""))
+	RunState.add_card_to_deck(card_id)
+	offer["sold"] = true
+	card_offers[offer_index] = offer
+	inventory["card_offers"] = card_offers
+	return {"ok": true, "card_id": card_id, "price": price}
+
+
+static func try_buy_relic(inventory: Dictionary) -> Dictionary:
+	var relic_offer: Dictionary = inventory.get("relic_offer", {})
+	if relic_offer.is_empty() or bool(relic_offer.get("sold", false)):
+		return {"ok": false, "reason": "missing"}
+
+	var price := int(relic_offer.get("price", 0))
+	if not RunState.spend_gold(price):
+		return {"ok": false, "reason": "gold"}
+
+	var relic_id := str(relic_offer.get("relic_id", ""))
+	RunState.add_relic(relic_id)
+	relic_offer["sold"] = true
+	inventory["relic_offer"] = relic_offer
+	return {"ok": true, "relic_id": relic_id, "price": price}
+
+
+static func try_remove_card(inventory: Dictionary, card_id: String) -> Dictionary:
+	var remove_price := int(inventory.get("remove_card_price", 0))
+	if not RunState.spend_gold(remove_price):
+		return {"ok": false, "reason": "gold"}
+
+	if not RunState.remove_card_from_deck(card_id):
+		RunState.add_gold(remove_price)
+		return {"ok": false, "reason": "remove"}
+
+	return {"ok": true, "card_id": card_id, "price": remove_price}

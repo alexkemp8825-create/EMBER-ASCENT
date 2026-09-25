@@ -1,5 +1,7 @@
 extends PanelContainer
 
+const RunActionsScript := preload("res://scripts/core/RunActions.gd")
+
 @onready var subtitle_label: Label = %SubtitleLabel
 @onready var temper_button: Button = %TemperButton
 @onready var continue_button: Button = %ContinueButton
@@ -17,8 +19,7 @@ func _on_temper_pressed() -> void:
 	if _tempered:
 		return
 
-	RunState.max_hp += 4
-	RunState.current_hp += 4
+	RunActionsScript.temper()
 	_tempered = true
 	temper_button.disabled = true
 	subtitle_label.text = "The smith tempers you. +4 Max HP."

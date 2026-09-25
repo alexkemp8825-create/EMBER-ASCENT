@@ -5,6 +5,7 @@ const VERSION := "0.1.5-type-fix"
 var current_screen: String = "main_menu"
 var game_version: String = VERSION
 var debug_mode: bool = true
+var simulation_quiet: bool = false
 
 
 func set_current_screen(screen_name: String) -> void:
