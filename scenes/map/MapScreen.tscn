@@ -40,6 +40,13 @@ layout_mode = 2
 text = "HP: 0/0  |  Gold: 0  |  Floor: 0"
 horizontal_alignment = 1
 
+[node name="BuildLabel" type="Label" parent="MarginContainer/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Build: Unspecialized"
+horizontal_alignment = 1
+autowrap_mode = 3
+
 [node name="PrimaryActionButton" type="Button" parent="MarginContainer/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(640, 72)

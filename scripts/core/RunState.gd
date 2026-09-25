@@ -19,6 +19,12 @@ var current_node_id: String = ""
 var run_seed: int = 0
 var tower_state: TowerState
 var active_room_id: String = ""
+var soul: int = 0
+var corpses: int = 0
+var opening_pyre_damage: int = 0
+var opening_pyre_burn: int = 0
+var upgrade_stacks: Dictionary = {}
+var suppress_room_log: bool = false
 var _show_act_transition_message: bool = false
 
 
@@ -37,6 +43,12 @@ func reset_run() -> void:
 	run_seed = 0
 	tower_state = null
 	active_room_id = ""
+	soul = 0
+	corpses = 0
+	opening_pyre_damage = 0
+	opening_pyre_burn = 0
+	upgrade_stacks = {}
+	suppress_room_log = false
 	_show_act_transition_message = false
 
 
@@ -61,6 +73,11 @@ func serialize() -> Dictionary:
 		"current_node_id": current_node_id,
 		"run_seed": run_seed,
 		"active_room_id": active_room_id,
+		"soul": soul,
+		"corpses": corpses,
+		"opening_pyre_damage": opening_pyre_damage,
+		"opening_pyre_burn": opening_pyre_burn,
+		"upgrade_stacks": upgrade_stacks.duplicate(),
 		"tower_state": tower_data,
 	}
 
@@ -78,6 +95,15 @@ func deserialize(data: Dictionary) -> void:
 	run_seed = int(data.get("run_seed", 0))
 	active_room_id = ""
 	_show_act_transition_message = false
+	soul = int(data.get("soul", 0))
+	corpses = int(data.get("corpses", 0))
+	opening_pyre_damage = int(data.get("opening_pyre_damage", 0))
+	opening_pyre_burn = int(data.get("opening_pyre_burn", 0))
+	upgrade_stacks = {}
+	var saved_stacks: Variant = data.get("upgrade_stacks", {})
+	if saved_stacks is Dictionary:
+		for upgrade_id in (saved_stacks as Dictionary).keys():
+			upgrade_stacks[str(upgrade_id)] = int((saved_stacks as Dictionary)[upgrade_id])
 
 	deck.clear()
 	for card_id in data.get("deck", []):
@@ -140,15 +166,17 @@ func enter_room(room_id: String) -> void:
 		current_floor = room.floor
 		current_node_id = room_id
 
-	print("ENTER ROOM id=", room_id, " floor=", current_floor, " (room not completed yet)")
+	if not suppress_room_log:
+		print("ENTER ROOM id=", room_id, " floor=", current_floor, " (room not completed yet)")
 
 
-func complete_active_room() -> bool:
+func complete_active_room(persist: bool = true) -> bool:
 	if active_room_id == "":
 		push_warning("complete_active_room called with no active room.")
 		return false
 
-	print("COMPLETE ACTIVE ROOM id=", active_room_id)
+	if not suppress_room_log:
+		print("COMPLETE ACTIVE ROOM id=", active_room_id)
 
 	var completed := get_tower_state().mark_room_completed(active_room_id)
 	if completed:
@@ -158,22 +186,25 @@ func complete_active_room() -> bool:
 	active_room_id = ""
 
 	if completed:
-		_persist_run_progress()
+		_resolve_boss_progression(persist)
 
 	return completed
 
 
-func _persist_run_progress() -> void:
+func _resolve_boss_progression(persist: bool) -> void:
 	if not get_tower_state().is_boss_defeated():
-		SaveManager.save_run()
+		if persist:
+			SaveManager.save_run()
 		return
 
 	if current_act >= FINAL_ACT:
-		SaveManager.delete_save()
+		if persist:
+			SaveManager.delete_save()
 		return
 
 	advance_to_next_act()
-	SaveManager.save_run()
+	if persist:
+		SaveManager.save_run()
 
 
 func add_card_to_deck(card_id: String) -> void:

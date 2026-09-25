@@ -15,7 +15,7 @@ A roguelike deckbuilder built in Godot 4.x. Climb the Living Tower, fight enemie
 
 The main scene is `scenes/main/Main.tscn`.
 
-**Verify you have the latest build:** the main menu should show `Build 0.1.2-launch-fix` and the window title should say `EMBER ASCENT 0.1.2-launch-fix`. If you only see three buttons with no build text, you are on an old copy — pull latest `main`, delete the `.godot` folder, and re-import.
+**Verify you have the latest build:** the main menu should show `Build 0.2.0-run-upgrades` and the window title should say `EMBER ASCENT 0.2.0-run-upgrades`. If you only see three buttons with no build text, you are on an old copy — pull latest `main`, delete the `.godot` folder, and re-import.
 
 ## How to Play (Test Build)
 
@@ -24,7 +24,7 @@ The main scene is `scenes/main/Main.tscn`.
 3. **First battle** — After class select, you go straight into your first fight (no map screen yet).
 4. **Tower Map (The Ember Spire)** — After combat, use the big **Continue** button or click a room on the map.
 5. **Combat** — Play cards using energy, gain block, target enemies, then press **End Turn**.
-6. **Rewards** — After combat, take gold, a card, or (after bosses) a relic.
+6. **Rewards** — After combat, take gold, a card (or a boss relic), and one of three run upgrades. The tower map lists the upgrades you have taken and the dominant build theme. Stacking rules are in `docs/sprint-28-9-balance-report.md`.
 7. **Act 2** — Defeat the Act 1 boss to advance; you heal 30% of max HP and climb a new tower.
 8. **Victory** — Defeat the Act 2 boss (`ember_regent`) to complete the run. Use **New Run** or **Main Menu** on the victory screen.
 
