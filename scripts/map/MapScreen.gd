@@ -1,8 +1,10 @@
 extends PanelContainer
 
 const MapNavigatorScript := preload("res://scripts/map/MapNavigator.gd")
+const RunUpgradeRulesScript := preload("res://scripts/rewards/RunUpgradeRules.gd")
 
 @onready var stats_label: Label = %StatsLabel
+@onready var build_label: Label = %BuildLabel
 @onready var status_label: Label = %StatusLabel
 @onready var version_label: Label = %VersionLabel
 @onready var primary_action_button: Button = %PrimaryActionButton
@@ -43,6 +45,7 @@ func _refresh_map() -> void:
 		RunState.current_act,
 		current_room.floor if current_room != null else 0,
 	]
+	build_label.text = RunUpgradeRulesScript.build_summary()
 
 	if tower_map_canvas.has_method("refresh"):
 		tower_map_canvas.refresh(tower_state)
@@ -92,12 +95,13 @@ func _show_victory_panel() -> void:
 	tower_map_canvas.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	victory_message_label.text = (
 		"You have conquered the Ember Spire.\n"
-		+ "Class: %s  |  Final HP: %d/%d  |  Gold: %d"
+		+ "Class: %s  |  Final HP: %d/%d  |  Gold: %d\n%s"
 	) % [
 		_get_class_display_name(),
 		RunState.current_hp,
 		RunState.max_hp,
 		RunState.gold,
+		RunUpgradeRulesScript.build_summary(),
 	]
 	status_label.text = "Run complete! The tower falls silent."
 

@@ -11,6 +11,8 @@ const GOLD_BY_ENCOUNTER := {
 	"furnace_hound": 16,
 	"ash_zealot": 22,
 	"ember_regent": 65,
+	"cultist_pack": 22,
+	"hound_pack": 24,
 }
 
 const BOSS_ENCOUNTER_IDS: Array[String] = [
@@ -29,7 +31,9 @@ const ACT_GOLD_BONUS := 8
 const CARD_REWARD_COUNT := 3
 const ELITE_CARD_REWARD_COUNT := 4
 const RELIC_REWARD_COUNT := 3
+const UPGRADE_REWARD_COUNT := 3
 const FINAL_ACT := 2
+const RunUpgradeRulesScript := preload("res://scripts/rewards/RunUpgradeRules.gd")
 
 
 static func build_combat_reward_payload(encounter_id: String, floor: int) -> Dictionary:
@@ -50,6 +54,8 @@ static func build_combat_reward_payload(encounter_id: String, floor: int) -> Dic
 		for relic_data in relic_database.get_boss_reward_choices(RELIC_REWARD_COUNT, RunState.relics):
 			relic_choices.append(relic_data.id)
 
+	var upgrade_choices: Array[String] = RunUpgradeRulesScript.build_offer(UPGRADE_REWARD_COUNT)
+
 	return {
 		"encounter_id": encounter_id,
 		"floor": floor,
@@ -58,6 +64,7 @@ static func build_combat_reward_payload(encounter_id: String, floor: int) -> Dic
 		"gold": gold,
 		"card_choices": card_choices,
 		"relic_choices": relic_choices,
+		"upgrade_choices": upgrade_choices,
 	}
 
 

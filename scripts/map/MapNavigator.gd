@@ -93,7 +93,7 @@ static func get_battle_encounter_id(floor: int) -> String:
 			return "ash_zealot"
 
 		if floor == TowerGeneratorScript.FLOOR_FIRST_BATTLE:
-			return "furnace_hound"
+			return "hound_pack"
 
 		return "molten_guard"
 

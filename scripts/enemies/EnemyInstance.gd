@@ -10,6 +10,7 @@ var strength: int = 0
 var burn_stacks: int = 0
 var actions: Array[Dictionary] = []
 var action_index: int = 0
+var heavy_attack_ready: bool = false
 
 
 func setup(data: EnemyData) -> EnemyInstance:
@@ -25,6 +26,7 @@ func setup(data: EnemyData) -> EnemyInstance:
 		actions.append(action)
 
 	action_index = 0
+	heavy_attack_ready = false
 	return self
 
 

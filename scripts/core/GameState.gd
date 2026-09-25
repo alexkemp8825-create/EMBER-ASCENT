@@ -1,6 +1,6 @@
 extends Node
 
-const VERSION := "0.1.5-type-fix"
+const VERSION := "0.2.0-run-upgrades"
 
 var current_screen: String = "main_menu"
 var game_version: String = VERSION
